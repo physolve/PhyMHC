@@ -14,7 +14,7 @@ public:
     ~PhyMHC();
 private:
     void initGUI();
-    QQmlApplicationEngine m_engine;
     ScriptBase m_scriptDefault;
+    QQmlApplicationEngine m_engine;
 
 };

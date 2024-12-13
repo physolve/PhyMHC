@@ -18,15 +18,17 @@ Item {
 
     ValveButton {
         z: 1
-        id: valveButton
+        id: valveUps
         x: 823
         y: 315
+        checked: scriptDefault.mnemo.valveUpstream
     }
     ValveButton {
         z: 1
-        id: valveButton1
+        id: valveDowns
         x: 206
         y: 507
+        checked: scriptDefault.mnemo.valveDownstream
     }
     Reactor{
         z: 1
@@ -40,37 +42,43 @@ Item {
     }
     SensorWidget {
         z: 1
-        id: pressureUpstream
+        id: pressureUps
         x: 716
         y: 144
+        value: scriptDefault.mnemo.pressureUpstream
     }
     SensorWidget {
         z: 1
-        id: pressureDownstream
+        id: pressureDowns
         x: 277
         y: 667
+        value: scriptDefault.mnemo.pressureDownstream
     }
     TempWidget {
-        id: temperatureUpstream
+        id: temperatureUps
         x: 530
         y: 162
+        value: scriptDefault.mnemo.temperatureUpstream
     }
     TempWidget {
-        id: temperatureDownstream
+        id: temperatureDowns
         x: 395
         y: 683
+        value: scriptDefault.mnemo.temperatureDownstream
     }
 
     FlowMeterWidget {
-        id: flowMeterUpstream
+        id: flowMeterUps
         x: 332
         y: 302
+        value: scriptDefault.mnemo.flowUpstream
     }
 
     FlowMeterWidget {
-        id: flowMeterDownstream
+        id: flowMeterDowns
         x: 530
         y: 494
+        value: scriptDefault.mnemo.flowDownstream
     }
 }
 

@@ -12,7 +12,7 @@ PhyMHC::PhyMHC(int &argc, char **argv):
 }
 
 PhyMHC::~PhyMHC(){
-
+    m_engine.clearComponentCache();
 }
 
 void PhyMHC::initGUI(){
