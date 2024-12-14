@@ -14,12 +14,9 @@ Rectangle {
     property color centerColor: "#d83632"
     //
     function makeBrighter(intence){
-        // centerColor.a is a transparent
-        // you can make gray in corelDraw or user other way
-        console.log(intence)
         centerColor.a = intence
     }
-
+    
     Rectangle{
         z: 0
         y: 5

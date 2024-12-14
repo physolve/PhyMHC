@@ -30,7 +30,7 @@ Item {
         anchors.topMargin: 10
         spacing: 10
         Button{
-            width: 160
+            width: 200
             height: 50
             text: "1. test"
             anchors.horizontalCenter: parent.horizontalCenter
@@ -38,22 +38,29 @@ Item {
             onClicked: scriptDefault.firstTask()
         }
         Button{
-            width: 160
+            width: 200
             height: 50
             text: "2. values to STP"
             anchors.horizontalCenter: parent.horizontalCenter
             Material.roundedScale: Material.MediumScale
             onClicked: scriptDefault.secondTask()
         }
+        Connections{
+            target: scriptDefault
+            function onThirdTaskDone(){
+                thirdTaskButton.checked = false
+            }
+        }
         Button{
-            width: 160
+            id: thirdTaskButton
+            width: 200
             height: 50
+            checkable: true
             text: "3. Temperature transition"
             anchors.horizontalCenter: parent.horizontalCenter
             Material.roundedScale: Material.MediumScale
             onClicked: scriptDefault.thirdTask()
         }
-
     }
 
 }

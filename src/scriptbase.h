@@ -2,7 +2,9 @@
 
 #include <QObject>
 #include <QDebug>
-#include <QVariant>
+
+#include "heatermodel.h"
+
 static const double Rgas = 8.31446;
 
 struct mnemoValues{ // sample
@@ -27,12 +29,24 @@ public:
 	bool m_valveDownstream; // state
 };
 
+struct targetValues{
+    Q_GADGET
+    // it might be linked to json for import and multi-result log
+    Q_PROPERTY (double tempTargetUpstream MEMBER m_tempTargetUpstream)
+    Q_PROPERTY (double tempStartUpstream MEMBER m_tempStartUpstream)
+public:
+    double m_tempTargetUpstream; // C
+    double m_tempStartUpstream; // C
+};
+
 
 class ScriptBase : public QObject
 {
 	Q_OBJECT
 	Q_PROPERTY (QString infoString MEMBER m_infoString NOTIFY infoStringChanged)
     Q_PROPERTY (mnemoValues mnemo READ getMnemo NOTIFY mnemoChanged) //WRITE setExpTimingStruct 
+    Q_PROPERTY (targetValues targetvals READ getTargetValues) // NOTIFY mnemoChanged
+
 
 public:
     ScriptBase(QObject *parent = 0);
@@ -44,6 +58,11 @@ public:
 signals:
 	void infoStringChanged();
 	void mnemoChanged();
+    void reactorChanged(double intence);
+    void thirdTaskDone();
+
+private slots:
+    void updateHeating(double temp);
 
 private:
 	void sayHello();
@@ -51,4 +70,7 @@ private:
 	QString m_infoString;
 	mnemoValues m_mnemoValues;
     mnemoValues getMnemo() const;
+    targetValues m_targetValues;
+    targetValues getTargetValues() const;
+    HeaterModel m_heaterModel;
 };

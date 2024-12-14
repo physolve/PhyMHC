@@ -1,11 +1,13 @@
 #include "scriptbase.h"
-#include <math.h>
-#include <QFile>
 
 ScriptBase::ScriptBase(QObject *parent) : QObject(parent),
-m_mnemoValues{0,0,0,false,0,0,0,false}
+m_mnemoValues{0,0,0,false,0,0,0,false}, m_targetValues{0}, m_heaterModel()
 {
     sayHello();
+    connect(&m_heaterModel, &HeaterModel::temperatureChanged, this, &ScriptBase::updateHeating);
+    connect(&m_heaterModel, &HeaterModel::targetReached, [=]( ) { 
+        emit thirdTaskDone(); 
+    });
 }
 
 ScriptBase::~ScriptBase(){
@@ -37,7 +39,23 @@ mnemoValues ScriptBase::getMnemo() const{
     return m_mnemoValues;
 }
 
-void ScriptBase::thirdTask(){
+void ScriptBase::thirdTask(){ // make off signal (false)
     // using data from source to "heat up" reactor
     // timing script normalized function from 293 K to 573 K
+    m_targetValues.m_tempTargetUpstream = 300;
+    m_targetValues.m_tempStartUpstream = m_mnemoValues.m_temperatureUpstream;
+    // start timer to model time
+    m_heaterModel.startHeating(m_mnemoValues.m_temperatureUpstream, m_targetValues.m_tempTargetUpstream);
+}
+
+targetValues ScriptBase::getTargetValues() const{
+    return m_targetValues;
+}
+
+void ScriptBase::updateHeating(double temp){
+    m_mnemoValues.m_temperatureUpstream = temp;
+    emit mnemoChanged();
+
+    // connect to heater color
+
 }

@@ -30,7 +30,16 @@ Item {
         y: 507
         checked: scriptDefault.mnemo.valveDownstream
     }
+    Connections{
+        target: scriptDefault
+        function onMnemoChanged(){
+            let intence = (scriptDefault.mnemo.temperatureUpstream-scriptDefault.targetvals.tempStartUpstream)/(scriptDefault.targetvals.tempTargetUpstream-scriptDefault.targetvals.tempStartUpstream)
+            if (intence > 1) intence = 1
+            reactorUpstream.makeBrighter(intence)
+        } 
+    }
     Reactor{
+        id: reactorUpstream
         z: 1
         x: 206
         y: 144

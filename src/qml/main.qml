@@ -19,7 +19,7 @@ ApplicationWindow {
         id: grid
         anchors.fill: parent
         MnemoBase{
-            id: rectangle
+            id: mnemoBase
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.margins: 5
