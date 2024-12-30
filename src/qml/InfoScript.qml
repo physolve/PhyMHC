@@ -29,37 +29,78 @@ Item {
         anchors.bottom: parent.bottom
         anchors.topMargin: 10
         spacing: 10
-        Button{
-            width: 200
-            height: 50
-            text: "1. test"
-            anchors.horizontalCenter: parent.horizontalCenter
-            Material.roundedScale: Material.MediumScale
-            onClicked: scriptDefault.firstTask()
+        Row{
+            spacing: 10
+            Button{
+                width: 200
+                height: 50
+                text: "1. test"
+                //anchors.horizontalCenter: parent.horizontalCenter
+                Material.roundedScale: Material.MediumScale
+                onClicked: scriptDefault.firstTask()
+            }
+            Button{
+                width: 200
+                height: 50
+                text: "2. values to STP"
+                //anchors.horizontalCenter: parent.horizontalCenter
+                Material.roundedScale: Material.MediumScale
+                onClicked: scriptDefault.secondTask()
+            }
         }
-        Button{
-            width: 200
-            height: 50
-            text: "2. values to STP"
-            anchors.horizontalCenter: parent.horizontalCenter
-            Material.roundedScale: Material.MediumScale
-            onClicked: scriptDefault.secondTask()
-        }
-        Connections{
-            target: scriptDefault
-            function onThirdTaskDone(){
-                thirdTaskButton.checked = false
+        Row{
+            spacing: 10
+            Connections{
+                target: scriptDefault
+                function onThirdTaskDone(){
+                    thirdTaskButton.checked = false
+                }
+            }
+            Button{
+                id: thirdTaskButton
+                width: 200
+                height: 50
+                checkable: true
+                text: "3. Temperature transition"
+                //anchors.horizontalCenter: parent.horizontalCenter
+                Material.roundedScale: Material.MediumScale
+                onClicked: scriptDefault.thirdTask()
+            }
+            Connections{
+                target: scriptDefault
+                function onFourthTaskDone(){
+                    fourthTaskButton.checked = false
+                }
+            }
+            Button{
+                id: fourthTaskButton
+                width: 200
+                height: 50
+                checkable: true
+                text: "4. Flow transition"
+                //anchors.horizontalCenter: parent.horizontalCenter
+                Material.roundedScale: Material.MediumScale
+                onClicked: scriptDefault.fourthTask()
             }
         }
         Button{
-            id: thirdTaskButton
+            id: fifthTaskButton
             width: 200
             height: 50
             checkable: true
-            text: "3. Temperature transition"
+            text: "5. Flow to Reactor pressure"
             anchors.horizontalCenter: parent.horizontalCenter
             Material.roundedScale: Material.MediumScale
-            onClicked: scriptDefault.thirdTask()
+            onClicked: scriptDefault.fifthTask(checked)
+        }
+        Button{
+            id: manualPrepare
+            width: 200
+            height: 50
+            text: "6. Gas supply and valves"
+            anchors.horizontalCenter: parent.horizontalCenter
+            Material.roundedScale: Material.MediumScale
+            onClicked: scriptDefault.manualPrepare()
         }
     }
 

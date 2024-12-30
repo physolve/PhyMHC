@@ -6,6 +6,7 @@ HeaterModel::HeaterModel(QObject *parent) : QObject(parent), m_timer()
 }
 
 HeaterModel::~HeaterModel(){
+    if(m_timer.isActive()) m_timer.stop();
 }
 
 void HeaterModel::startHeating(double currentTemp, double targetTemp){
@@ -21,7 +22,7 @@ void HeaterModel::calculateTemperature(){ // heating
     // Consider using a transfer function to model the heating process.  A simple example:
     double tau = 30.0; // Time constant (adjust as needed)
     double dt = m_time.elapsed()/1000;
-    double tempChange = (m_targetTemp - m_startTemp) * (1 - exp(-dt / tau));
+    double tempChange = (m_targetTemp - m_startTemp) * 0.01;// (1 - exp(-dt / tau));
     m_currentTemp += tempChange;
     // Emit a signal to update the UI with the new temperature.  You'll need to define this signal in heatermodel.h
     emit temperatureChanged(m_currentTemp);

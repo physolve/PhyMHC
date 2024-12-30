@@ -15,13 +15,19 @@ Item {
         fillMode: Image.PreserveAspectCrop
         smooth: true
     }
-
+    GasTank {
+        z:1
+        id: gasTank
+        x: 36
+        y: 275
+    }
     ValveButton {
         z: 1
         id: valveUps
         x: 823
         y: 315
         checked: scriptDefault.mnemo.valveUpstream
+        onClicked: scriptDefault.valveUpstreamChanged(checked)
     }
     ValveButton {
         z: 1
@@ -41,7 +47,7 @@ Item {
     Reactor{
         id: reactorUpstream
         z: 1
-        x: 206
+        x: 203
         y: 144
     }
     Reactor {
@@ -89,10 +95,20 @@ Item {
         y: 494
         value: scriptDefault.mnemo.flowDownstream
     }
+
+    ValveButton {
+        id: valveVacuum
+        x: 823
+        y: 507
+        z: 1
+        checked: scriptDefault.mnemo.valveVacuum
+    }
+
+
 }
 
 /*##^##
 Designer {
-    D{i:0}D{i:1;locked:true}D{i:9}D{i:11}
+    D{i:0}D{i:1;locked:true}D{i:14}
 }
 ##^##*/

@@ -13,6 +13,8 @@
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/ShortComboBox.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/Reactor.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/FlowMeterWidget.qml</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/GasTank.qml</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/CircularSlider.qml</file>
 
         <file>qml/main.qml</file>
         <file>qml/InfoScript.qml</file>

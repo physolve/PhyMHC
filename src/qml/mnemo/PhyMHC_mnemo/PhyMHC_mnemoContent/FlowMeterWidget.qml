@@ -29,13 +29,13 @@ Rectangle {
         }
         Label {
             id: unitsBar
-            text: "бар"
+            text: "л"
             font.pixelSize: 16
             color: "white"
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: 2
-            anchors.rightMargin: 15
+            anchors.rightMargin: 22
         }
         Label {
             id: unitsDash
