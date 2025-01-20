@@ -39,3 +39,15 @@ public:
 private:
     unsigned int m_setId;
 };
+
+struct Valve{
+    QString m_name = "";
+    bool m_state = false;
+    void setState(bool s){
+        m_state = s;
+    }
+    bool getState(){
+       return m_state; 
+    }
+    Valve(const QString &name = "unknown", const bool &state = false): m_name(name), m_state(state) { }
+};

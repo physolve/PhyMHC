@@ -1,9 +1,5 @@
 #include "phymhc.h"
 
-// #include <windows.h>
-// #include "lib/USBIO_CSWrapper.h"
-// #pragma comment(lib, "ICPDAS_USBIO.lib")
-
 int main(int argc, char *argv[]) {
     QCoreApplication::setApplicationName("GRAMs");
     QCoreApplication::setApplicationVersion("1.0.0");

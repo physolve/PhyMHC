@@ -15,19 +15,8 @@ class ControllerBase : public QObject
 public:
     ControllerBase(QObject *parent = nullptr);
     virtual ~ControllerBase();
-//     virtual void startTest();
-// signals:
-//     virtual void valueChanged(); //?
-
-// protected slots:
-//     virtual void processEvents(); //?
-
-protected:
-    QElapsedTimer m_programmTime;
-    QTimer* m_timer;
-
-private:
-    ICPDAS_USBIO* USBIO_CS; // each device
+    virtual void startTest();
+    QString name;
 };
 
 class IcpAICtrl : public ControllerBase{
@@ -36,11 +25,45 @@ class IcpAICtrl : public ControllerBase{
 public:
     IcpAICtrl(QList<QSharedPointer<ControllerData>> dataStorage, QObject *parent = nullptr);
     virtual ~IcpAICtrl();
-//     void startTest() override;
-// signals:
-//     void valueChanged() override;
+    int initUSBAI();
+    void tempFunctionToSetChannelsType();
+    void startTest() override;
+signals:
+    void valueChanged(); //?
 
-// private slots:
-//     void processEvents() override;
+protected slots:
+    void processEvents(); //?
 
+private:
+    QTimer* m_timer;
+    QElapsedTimer m_programmTime;
+
+
+    ICPDAS_USBIO* USB_AI; // each device
+
+    QSharedPointer<ControllerData> time;
+    QSharedPointer<ControllerData> tcUp;
+    QSharedPointer<ControllerData> prUp;
+    QSharedPointer<ControllerData> flUp;
+
+    QSharedPointer<ControllerData> tcDw;
+    QSharedPointer<ControllerData> prDw;
+    QSharedPointer<ControllerData> flDw;
+};
+
+class IcpDOCtrl : public ControllerBase{
+    Q_OBJECT
+
+public:
+    IcpDOCtrl(QList<Valve> valves, QObject *parent = nullptr);
+    virtual ~IcpDOCtrl();
+    int initUSBDO();
+    void startTest() override;
+    
+private:
+    ICPDAS_USBIO* USB_DO; // each device
+
+    Valve vUp;
+    Valve vDw;
+    Valve vSu;
 };

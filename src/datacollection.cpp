@@ -45,3 +45,4 @@ void ExpData::setData(const QVector<double> &val_y){
     m_y = val_y;
 }
 
+
