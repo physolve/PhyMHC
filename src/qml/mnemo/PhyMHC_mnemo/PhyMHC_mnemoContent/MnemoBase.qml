@@ -1,14 +1,14 @@
 import QtQuick
 import QtQuick.Controls
-
 Item {
     id: root
     width: hMCmnemo.width
     height: hMCmnemo.height
+    property bool flowUpstreamShowChart: flowMeterUps.showChart
     Image {
         z: 0
         id: hMCmnemo
-        source: "background/mnemoscheme.png"
+        source: "background/mnemoscheme_beta.png"
         // fillMode: Image.PreserveAspectFit
         width: 1070
         height: 900
@@ -24,7 +24,7 @@ Item {
     ValveButton {
         z: 1
         id: valveUps
-        x: 823
+        x: 719
         y: 315
         checked: scriptDefault.mnemo.valveUpstream
         onClicked: scriptDefault.valveUpstreamChanged(checked)
@@ -32,7 +32,7 @@ Item {
     ValveButton {
         z: 1
         id: valveDowns
-        x: 206
+        x: 325
         y: 507
         checked: scriptDefault.mnemo.valveDownstream
     }
@@ -50,34 +50,70 @@ Item {
         x: 203
         y: 144
     }
+
+    Cooler{
+        z: 0
+        x: 218
+        y: 199
+    }
+    Cooler {
+        x: 303
+        y: 199
+        z: 0
+    }
+    Cooler {
+        x: 388
+        y: 199
+        z: 0
+    }
+
     Reactor {
         z: 1
         x: 582
         y: 667
     }
+
+    Cooler {
+        x: 594
+        y: 722
+        z: 0
+    }
+
+    Cooler {
+        x: 679
+        y: 722
+        z: 0
+    }
+
+    Cooler {
+        x: 764
+        y: 722
+        z: 0
+    }
+
     SensorWidget {
         z: 1
         id: pressureUps
-        x: 716
+        x: 658
         y: 144
         value: scriptDefault.mnemo.pressureUpstream
     }
     SensorWidget {
         z: 1
         id: pressureDowns
-        x: 277
+        x: 325
         y: 667
         value: scriptDefault.mnemo.pressureDownstream
     }
     TempWidget {
         id: temperatureUps
-        x: 530
-        y: 162
+        x: 514
+        y: 160
         value: scriptDefault.mnemo.temperatureUpstream
     }
     TempWidget {
         id: temperatureDowns
-        x: 395
+        x: 414
         y: 683
         value: scriptDefault.mnemo.temperatureDownstream
     }
@@ -98,17 +134,16 @@ Item {
 
     ValveButton {
         id: valveVacuum
-        x: 823
-        y: 507
+        x: 908
+        y: 484
         z: 1
         checked: scriptDefault.mnemo.valveVacuum
     }
-
 
 }
 
 /*##^##
 Designer {
-    D{i:0}D{i:1;locked:true}D{i:14}
+    D{i:0}D{i:1;locked:true}
 }
 ##^##*/

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import QtQuick.Controls.Material 2.12
 Rectangle {
     id: sensor
     width: 220
@@ -8,6 +9,7 @@ Rectangle {
     radius: 10
     color: "#c7512e"
     property double value: 0.0012
+    property bool showChart: chartShow.checked
     Rectangle {
         id: display
         width: 145
@@ -58,8 +60,15 @@ Rectangle {
             anchors.rightMargin: 13
         }
     }
-    RoundButton{
+    Button{
+        id: chartShow
         width: 45
+        checkable: true
+        checked: true
+        // highlighted: true
+        // Material.theme: Material.Dark
+        Material.background: checked ? Material.Orange : Material.Grey
+        // Material.elevation: checked ? 0 : 6
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         anchors.margins: 5

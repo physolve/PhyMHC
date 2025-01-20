@@ -83,24 +83,37 @@ Item {
                 onClicked: scriptDefault.fourthTask()
             }
         }
-        Button{
-            id: fifthTaskButton
-            width: 200
-            height: 50
-            checkable: true
-            text: "5. Flow to Reactor pressure"
-            anchors.horizontalCenter: parent.horizontalCenter
-            Material.roundedScale: Material.MediumScale
-            onClicked: scriptDefault.fifthTask(checked)
+        Row{
+            spacing: 10
+            Button{
+                id: fifthTaskButton
+                width: 200
+                height: 50
+                checkable: true
+                text: "5. Flow to Reactor pressure"
+                // anchors.horizontalCenter: parent.horizontalCenter
+                Material.roundedScale: Material.MediumScale
+                onClicked: scriptDefault.fifthTask(checked)
+            }
+            Button{
+                id: manualPrepare
+                width: 200
+                height: 50
+                text: "6. Gas supply and valves"
+                // anchors.horizontalCenter: parent.horizontalCenter
+                Material.roundedScale: Material.MediumScale
+                onClicked: scriptDefault.manualPrepare()
+            }
         }
         Button{
-            id: manualPrepare
+            id: manualTestController
             width: 200
             height: 50
-            text: "6. Gas supply and valves"
-            anchors.horizontalCenter: parent.horizontalCenter
+            // checkable: true
+            text: "7. Manual start of test controller"
+            // anchors.horizontalCenter: parent.horizontalCenter
             Material.roundedScale: Material.MediumScale
-            onClicked: scriptDefault.manualPrepare()
+            onClicked: backend.manualTestControllerStart()
         }
     }
 

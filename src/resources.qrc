@@ -5,7 +5,8 @@
     <qresource prefix="/PhyMHC">
 
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/MnemoBase.qml</file>
-        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/background/mnemoscheme.png</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/background/mnemoscheme_beta.png</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/pics/cooler.svg</file>
 
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/ValveButton.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/SensorWidget.qml</file>
@@ -15,8 +16,10 @@
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/FlowMeterWidget.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/GasTank.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/CircularSlider.qml</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/Cooler.qml</file>
 
         <file>qml/main.qml</file>
         <file>qml/InfoScript.qml</file>
+        <file>qml/TagChartTest.qml</file>
     </qresource>
 </RCC>
