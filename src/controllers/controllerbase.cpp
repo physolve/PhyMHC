@@ -78,7 +78,7 @@ void IcpAICtrl::tempFunctionToSetChannelsType(){
 
 void IcpAICtrl::startTest(){
     m_programmTime.start();
-    m_timer->start(33);
+    m_timer->start(1000);
 }
 
 void IcpAICtrl::processEvents(){

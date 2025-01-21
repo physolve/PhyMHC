@@ -26,6 +26,8 @@ private:
     QQmlApplicationEngine m_engine;
     CustomPlotItem* m_testAxisTag;
 
+    // create objects for controllers. DO valves, fans, flow, heaters. AI pressure, thermocouples, flow 
+
     QSharedPointer<ControllerData> time;
     QSharedPointer<ControllerData> upstream;
     QSharedPointer<ControllerData> downstream;
