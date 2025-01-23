@@ -6,7 +6,7 @@ BYTE m_byAITotal;
 BYTE m_byDOTotal;
 
 ControllerBase::ControllerBase(QObject *parent) : 
-    QObject(parent)
+    QObject(parent), connectionState(false)
 {
     // connect(m_timer, &QTimer::timeout, this, &ControllerBase::processEvents);
 }
@@ -16,6 +16,10 @@ ControllerBase::~ControllerBase(){
 }
 
 void ControllerBase::startTest(){
+}
+
+bool ControllerBase::isConnected(){
+    return connectionState;
 }
 
 IcpAICtrl::IcpAICtrl(QList<QSharedPointer<ControllerData>> dataStorage, QObject *parent) : 
@@ -49,7 +53,7 @@ int IcpAICtrl::initUSBAI(){
     BYTE bySupIOMask, byDeviceNickName[32], byDeviceSN[32];
 
     USB_AI = CreateInstance();
-
+    
     if(ERR_NO_ERR != (iErrCode = OpenDevice(USB_AI, USB2019, 1))){
         char szMessage[10];
         qDebug() << QString("OpenDevice error [%1]").arg(iErrCode);
@@ -57,6 +61,7 @@ int IcpAICtrl::initUSBAI(){
         getchar();
         return -1;
     }
+    connectionState = true;
     // GetFwVer(USB_AI, &wFWVer);
 
     GetSupportIOMask(USB_AI, &bySupIOMask);
@@ -87,6 +92,8 @@ void IcpAICtrl::processEvents(){
 
     if(ERR_NO_ERR != (iErrCode = AI_ReadValueAnalog(USB_AI, o_fAIValue))){
         qDebug() << QString::number(iErrCode);
+        connectionState = false;
+        // emit disconnect state
     }
     else{
         for(auto iIdx = 0; iIdx < USBIO_AI_MAX_CHANNEL; iIdx++){
@@ -96,14 +103,12 @@ void IcpAICtrl::processEvents(){
     emit valueChanged();   
 }
 
-IcpDOCtrl::IcpDOCtrl(QList<Valve> valves, QObject *parent) : 
+IcpDOCtrl::IcpDOCtrl(const QList<Switch> &switches, QObject *parent) : 
     ControllerBase(parent), USB_DO(nullptr)
 {
     name = "IcpDOCtrl";
 
-    vUp = valves[0];
-    vDw = valves[1];
-    vSu = valves[2];
+    m_switches = switches;
 }
 
 IcpDOCtrl::~IcpDOCtrl(){
@@ -141,10 +146,22 @@ void IcpDOCtrl::startTest(){
     DO_ReadValue(USB_DO, o_byDORead);
 
     QVector<bool> vector;
-    for(int j = 0; j < 8; ++j){
-        vector.append(o_byDORead[0]>>j&0x1);
+    for(int j = 0; j < 7; ++j){
+        vector.append(o_byDORead[0]>>j&0x1); // from back
     }
-    vUp.setState(vector[0]);
-    vDw.setState(vector[1]);
-    vSu.setState(vector[2]);
+    for(int j = 0; j < 2; ++j){
+        vector.append(o_byDORead[1]>>j&0x1); // from back
+    }
+    // auto it_begin = m_switches.begin();
+    for(auto i = 0; i < vector.size(); ++i){
+        m_switches[i].setState(vector[i]);
+    }
+}
+
+void IcpDOCtrl::setSwitchList(const QList<Switch> &switches){
+    m_switches = switches;
+}
+
+QList<Switch> IcpDOCtrl::getSwitchList() const{
+    return m_switches;
 }

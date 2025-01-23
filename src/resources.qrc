@@ -21,5 +21,6 @@
         <file>qml/main.qml</file>
         <file>qml/InfoScript.qml</file>
         <file>qml/TagChartTest.qml</file>
+        <file>qml/ControllerStatus.qml</file>
     </qresource>
 </RCC>

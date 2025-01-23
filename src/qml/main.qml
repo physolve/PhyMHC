@@ -6,7 +6,7 @@ import QtCharts
 import "mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent"
 ApplicationWindow {
     id: main
-    width: 1550
+    width: 1660
     height: 910
     x: Screen.width / 2 - width / 2
     y: Screen.height / 2 - height / 2
@@ -126,10 +126,26 @@ ApplicationWindow {
                 }
                 
                 Item{
-                    //Layout.fillHeight: true
-                    Rectangle{
-                        id: test3
-                        width: 100; height: 100
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    RowLayout{
+                        spacing: 10
+                        ControllerStatus{
+                            name: "USB-2019"
+                            parameters: [ "Temperature upstream", "Pressure upstream", "Flow upstream", 
+                            "Temperature downstream", "Pressure downstream", "Flow downstream"]
+                                // {
+                                //     parameter: "temperature upstream"
+                                // },
+                            //]
+                        }
+                        ControllerStatus{
+                            name: "USB-2045"
+                            parameters: [ "Valve upstream", "Valve downstream", "Valve supply",
+                            "Cooler upstream", "Cooler downstream", "Heater upstream", "Heater downstream", 
+                            "skip",
+                            "Flow upstream", "Flow downstream"]
+                        }
                     }
                 }
             } 

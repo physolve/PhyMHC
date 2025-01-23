@@ -17,6 +17,9 @@ public:
     virtual ~ControllerBase();
     virtual void startTest();
     QString name;
+    bool isConnected();
+protected:
+    bool connectionState;
 };
 
 class IcpAICtrl : public ControllerBase{
@@ -38,7 +41,6 @@ private:
     QTimer* m_timer;
     QElapsedTimer m_programmTime;
 
-
     ICPDAS_USBIO* USB_AI; // each device
 
     QSharedPointer<ControllerData> time;
@@ -55,15 +57,16 @@ class IcpDOCtrl : public ControllerBase{
     Q_OBJECT
 
 public:
-    IcpDOCtrl(QList<Valve> valves, QObject *parent = nullptr);
+    IcpDOCtrl(const QList<Switch>& switches, QObject *parent = nullptr);
     virtual ~IcpDOCtrl();
     int initUSBDO();
     void startTest() override;
-    
+    void setSwitchList(const QList<Switch>& switches);
+    QList<Switch> getSwitchList() const;
 private:
     ICPDAS_USBIO* USB_DO; // each device
-
-    Valve vUp;
-    Valve vDw;
-    Valve vSu;
+    QList<Switch> m_switches;
+    // fans // port 1, 0?
+    // flow valves // port 2, 0?
+    // heaters // port 1, 0?
 };
