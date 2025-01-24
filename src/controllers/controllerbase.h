@@ -17,7 +17,7 @@ public:
     virtual ~ControllerBase();
     virtual void startTest();
     QString name;
-    bool isConnected();
+    bool isConnected() const;
 protected:
     bool connectionState;
 };
@@ -26,9 +26,10 @@ class IcpAICtrl : public ControllerBase{
     Q_OBJECT // ?
 
 public:
-    IcpAICtrl(QList<QSharedPointer<ControllerData>> dataStorage, QObject *parent = nullptr);
+    IcpAICtrl(QObject *parent = nullptr);
     virtual ~IcpAICtrl();
     int initUSBAI();
+    void setData(ControllerData* ptr, DataType type);
     void tempFunctionToSetChannelsType();
     void startTest() override;
 signals:
@@ -43,29 +44,30 @@ private:
 
     ICPDAS_USBIO* USB_AI; // each device
 
-    QSharedPointer<ControllerData> time;
-    QSharedPointer<ControllerData> tcUp;
-    QSharedPointer<ControllerData> prUp;
-    QSharedPointer<ControllerData> flUp;
-
-    QSharedPointer<ControllerData> tcDw;
-    QSharedPointer<ControllerData> prDw;
-    QSharedPointer<ControllerData> flDw;
+    ControllerData* time;
+    ControllerData* tcUp;
+    ControllerData* prUp;
+    ControllerData* flUp;
+    ControllerData* tcDw;
+    ControllerData* prDw;
+    ControllerData* flDw;
 };
 
 class IcpDOCtrl : public ControllerBase{
     Q_OBJECT
 
 public:
-    IcpDOCtrl(const QList<Switch>& switches, QObject *parent = nullptr);
+    IcpDOCtrl(QObject *parent = nullptr);
     virtual ~IcpDOCtrl();
+    void addSwitchToList(Switch** ptr);
     int initUSBDO();
     void startTest() override;
-    void setSwitchList(const QList<Switch>& switches);
-    QList<Switch> getSwitchList() const;
+    // void setSwitchList(const QList<Switch>& switches);
+    // QList<Switch> getSwitchList() const;
 private:
     ICPDAS_USBIO* USB_DO; // each device
-    QList<Switch> m_switches;
+    // QList<QSharedPointer<Switch>> m_switches;
+    Switch** m_switches;
     // fans // port 1, 0?
     // flow valves // port 2, 0?
     // heaters // port 1, 0?

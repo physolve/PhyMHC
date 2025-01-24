@@ -1,9 +1,18 @@
 #pragma once
 #include <QString>
 #include <QMap>
-
+#include <QDebug>
 // should be either signal of data changed
 // should be Q_OBJECT
+enum DataType{
+    TYPE_time,
+    TYPE_tcUp,
+    TYPE_prUp,
+    TYPE_flUp,
+    TYPE_tcDw,
+    TYPE_prDw,
+    TYPE_flDw
+};
 
 class DataCollection //: public QObject
 {
@@ -28,7 +37,7 @@ class ControllerData : public DataCollection
 {
 public:
     ControllerData(const QString &name);
-
+    virtual ~ControllerData();
 };
 
 class ExpData : public DataCollection
@@ -50,4 +59,5 @@ struct Switch{
        return m_state; 
     }
     Switch(const QString &name = "unknown", const bool &state = false): m_name(name), m_state(state) { }
+    ~Switch(){  }
 };

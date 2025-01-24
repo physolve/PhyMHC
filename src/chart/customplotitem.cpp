@@ -2,7 +2,8 @@
 #include "../lib/qcustomplot.h"
 #include <QDebug>
  
-CustomPlotItem::CustomPlotItem( QQuickItem* parent ) : QQuickPaintedItem(parent),
+CustomPlotItem::CustomPlotItem(QQuickItem* parent) : QQuickPaintedItem(parent),
+    // m_time(nullptr), m_sensors(nullptr),
     m_CustomPlot(nullptr), mTag1(nullptr), mTag2(nullptr), backlogSize(10)//, updateTimer(new QTimer)
 {
     setFlag(QQuickItem::ItemHasContents, true);
@@ -20,6 +21,8 @@ CustomPlotItem::~CustomPlotItem()
 {
     delete m_CustomPlot;
     m_CustomPlot = nullptr;
+    delete mTag1;
+    delete mTag2;
 }
 
 CustomPlotItem* CustomPlotItem::getCustomPlot()
@@ -29,6 +32,7 @@ CustomPlotItem* CustomPlotItem::getCustomPlot()
 
 void CustomPlotItem::initCustomPlot()
 {
+    qDebug() << "hz";
     m_CustomPlot = new QCustomPlot;
     m_CustomPlot->setOpenGl(true);
     connect(m_CustomPlot, &QCustomPlot::destroyed, this, [=](){ qDebug() << QString("QCustomPlot (%1) pointer is destroyed ").arg(0); });
@@ -138,22 +142,24 @@ void CustomPlotItem::setupPlot(QCustomPlot* customPlot)
     customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
 }
 
-void CustomPlotItem::setDataPointers(QSharedPointer<DataCollection> time, QList<QSharedPointer<DataCollection>> sensors){
-    m_time = time;
-    m_sensors = sensors;
-    // updateTimer->start(33);
+void CustomPlotItem::setDataPointers(DataCollection* ptr, DataType type){
+    if(type != DataType::TYPE_time) {
+        // m_sensors << QSharedPointer<DataCollection>(ptr);
+        return;
+    }
+    // m_time = QSharedPointer<DataCollection>(ptr);
 }
 
 void CustomPlotItem::dataUpdated()
 {
-     if(m_sensors.isEmpty()){
-        return;
-    }
+    // if(m_sensors.isEmpty()){
+    //     return;
+    // }
     // static double lastPointKey = 0; // making problems being static
     qreal lastPointKey = 0;
 
-    mGraph1->setData(m_time->getValue(), m_sensors[0]->getValue()); // use add last data for real time
-    mGraph2->setData(m_time->getValue(), m_sensors[1]->getValue());
+    // mGraph1->setData(m_time->getValue(), m_sensors[0]->getValue()); // use add last data for real time
+    // mGraph2->setData(m_time->getValue(), m_sensors[1]->getValue());
 
     // for(auto i = 0; i < m_CustomPlot->graphCount(); ++i){
     //     if(m_time->getValue().count()!=m_sensors[i]->getValue().count()){ //sync 

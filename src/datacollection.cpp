@@ -7,7 +7,7 @@ DataCollection::DataCollection(const QString &name) : m_name(name)
 }
 
 DataCollection::~DataCollection(){
-
+    qDebug() << "DataCollection destructor + " << m_name;
 }
 void DataCollection::clearPoints(){
     m_y.clear();
@@ -31,11 +31,13 @@ double DataCollection::getCurValue() const{
     return m_y.last();
 }
 
-
 ControllerData::ControllerData(const QString &name) : DataCollection(name)
 {
 }
 
+ControllerData::~ControllerData(){
+    qDebug() << "ControllerData destructor";
+}
 
 ExpData::ExpData(const QString &name, const int &setId) : DataCollection(name), m_setId(setId)
 {

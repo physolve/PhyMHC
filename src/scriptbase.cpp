@@ -20,6 +20,7 @@ m_mnemoValues{0,0,0,false,0,0,0,false}, m_targetValues{0}, m_heaterModel(), m_fl
 }
 
 ScriptBase::~ScriptBase(){
+    qDebug() << "Script base destructor";
 }
 
 void ScriptBase::sayHello(){

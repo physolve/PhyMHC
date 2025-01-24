@@ -10,9 +10,13 @@ class TestController : public QObject
     Q_OBJECT
     
 public:
-    TestController(QList<QSharedPointer<ControllerData>> dataStorage, QObject *parent = nullptr);
+    TestController(QObject *parent = nullptr);
     virtual ~TestController();
+    void setTimeData(ControllerData* ptr);
+    void setUpstreamData(ControllerData* ptr);
+    void setDownstreamData(ControllerData* ptr);
     void startTest();
+
 signals:
     void valueChanged();
 

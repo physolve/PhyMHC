@@ -18,33 +18,36 @@ ControllerBase::~ControllerBase(){
 void ControllerBase::startTest(){
 }
 
-bool ControllerBase::isConnected(){
+bool ControllerBase::isConnected() const{
     return connectionState;
 }
 
-IcpAICtrl::IcpAICtrl(QList<QSharedPointer<ControllerData>> dataStorage, QObject *parent) : 
+IcpAICtrl::IcpAICtrl(QObject *parent) : 
     ControllerBase(parent), USB_AI(nullptr), m_timer(new QTimer)
 {
     name = "IcpAICtrl";
-
-    time = dataStorage[0];
-
-    tcUp = dataStorage[1];
-    prUp = dataStorage[2];
-    flUp = dataStorage[3];
-
-    tcDw = dataStorage[4];
-    prDw = dataStorage[5];
-    flDw = dataStorage[6];
-    
     connect(m_timer, &QTimer::timeout, this, &IcpAICtrl::processEvents);
 }
 
 IcpAICtrl::~IcpAICtrl(){
-    CloseDevice(USB_AI);
-    USB_AI = nullptr;
+    if(USB_AI){
+        CloseDevice(USB_AI);
+        USB_AI = nullptr;
+    }
     if(m_timer->isActive()) m_timer->stop();
     qDebug() << "IcpAICtrl destructor";
+}
+
+void IcpAICtrl::setData(ControllerData* ptr, DataType type){
+    // switch(type){
+    //     case DataType::TYPE_time: time = QSharedPointer<ControllerData>(ptr); break;
+    //     case DataType::TYPE_tcUp: tcUp = QSharedPointer<ControllerData>(ptr); break;
+    //     case DataType::TYPE_prUp: prUp = QSharedPointer<ControllerData>(ptr); break;
+    //     case DataType::TYPE_flUp: flUp = QSharedPointer<ControllerData>(ptr); break;
+    //     case DataType::TYPE_tcDw: tcDw = QSharedPointer<ControllerData>(ptr); break;
+    //     case DataType::TYPE_prDw: prDw = QSharedPointer<ControllerData>(ptr); break;
+    //     case DataType::TYPE_flDw: flDw = QSharedPointer<ControllerData>(ptr); break;
+    // }
 }
 
 int IcpAICtrl::initUSBAI(){
@@ -58,7 +61,7 @@ int IcpAICtrl::initUSBAI(){
         char szMessage[10];
         qDebug() << QString("OpenDevice error [%1]").arg(iErrCode);
         CloseDevice(USB_AI);
-        getchar();
+        USB_AI = nullptr;
         return -1;
     }
     connectionState = true;
@@ -103,18 +106,23 @@ void IcpAICtrl::processEvents(){
     emit valueChanged();   
 }
 
-IcpDOCtrl::IcpDOCtrl(const QList<Switch> &switches, QObject *parent) : 
+IcpDOCtrl::IcpDOCtrl(QObject *parent) : 
     ControllerBase(parent), USB_DO(nullptr)
 {
     name = "IcpDOCtrl";
-
-    m_switches = switches;
 }
 
 IcpDOCtrl::~IcpDOCtrl(){
-    CloseDevice(USB_DO);
-    USB_DO = nullptr;
+    if(USB_DO){
+        CloseDevice(USB_DO);
+        USB_DO = nullptr;
+    }
     qDebug() << "IcpDOCtrl destructor";
+}
+
+void IcpDOCtrl::addSwitchToList(Switch** ptr){
+    // m_switches.append(QSharedPointer<Switch>(ptr));
+    m_switches = ptr;
 }
 
 int IcpDOCtrl::initUSBDO(){
@@ -128,7 +136,7 @@ int IcpDOCtrl::initUSBDO(){
         char szMessage[10];
         qDebug() << QString("OpenDevice error [%1]").arg(iErrCode);
         CloseDevice(USB_DO);
-        getchar();
+        USB_DO = nullptr;
         return -1;
     }
 
@@ -154,14 +162,14 @@ void IcpDOCtrl::startTest(){
     }
     // auto it_begin = m_switches.begin();
     for(auto i = 0; i < vector.size(); ++i){
-        m_switches[i].setState(vector[i]);
+        m_switches[i]->setState(vector[i]);
     }
 }
 
-void IcpDOCtrl::setSwitchList(const QList<Switch> &switches){
-    m_switches = switches;
-}
+// void IcpDOCtrl::setSwitchList(const QList<Switch> &switches){
+//     m_switches = switches;
+// }
 
-QList<Switch> IcpDOCtrl::getSwitchList() const{
-    return m_switches;
-}
+// QList<Switch*> IcpDOCtrl::getSwitchList() const{
+//     return m_switches;
+// }

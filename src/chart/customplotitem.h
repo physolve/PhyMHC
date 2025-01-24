@@ -24,7 +24,7 @@ public:
     void backgroundCustomPlot();
     void setupPlot(QCustomPlot* customPlot);
 
-    void setDataPointers(QSharedPointer<DataCollection> time, QList<QSharedPointer<DataCollection>> sensors);
+    void setDataPointers(DataCollection* ptr, DataType type);
 protected:
     void routeMouseEvents( QMouseEvent* event );
     void routeWheelEvents(QWheelEvent *event);
@@ -40,8 +40,8 @@ private:
     QPointer<QCPGraph> mGraph2;
     AxisTag *mTag1;
     AxisTag *mTag2;
-    QSharedPointer<DataCollection> m_time;
-    QList<QSharedPointer<DataCollection>> m_sensors; // from controllers
+    // DataCollection* m_time;
+    // DataCollection** m_sensors; // from controllers
     // QTimer* updateTimer;
     bool rescalingON;
     int backlogSize;

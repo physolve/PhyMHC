@@ -1,16 +1,26 @@
 #include "testcontroller.h"
 
-TestController::TestController(QList<QSharedPointer<ControllerData>> dataStorage, QObject *parent) : 
+TestController::TestController(QObject *parent) : 
     QObject(parent), m_timer(new QTimer)
 {
     connect(m_timer, &QTimer::timeout, this, &TestController::processEvents);
-    time = dataStorage[0];
-    upstream = dataStorage[1];
-    downstream = dataStorage[2];
 }
 
 TestController::~TestController(){
+    qDebug() << "test controller destructor";
     if(m_timer->isActive()) m_timer->stop();
+}
+
+void TestController::setTimeData(ControllerData* ptr){
+    time = QSharedPointer<ControllerData>(ptr);
+}
+
+void TestController::setUpstreamData(ControllerData* ptr){
+    upstream = QSharedPointer<ControllerData>(ptr);
+}
+
+void TestController::setDownstreamData(ControllerData* ptr){
+    downstream = QSharedPointer<ControllerData>(ptr);
 }
 
 void TestController::startTest(){
