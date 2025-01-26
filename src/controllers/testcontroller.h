@@ -26,7 +26,10 @@ private slots:
 private:
     QElapsedTimer m_programmTime;
     QTimer* m_timer;
-    QSharedPointer<ControllerData> time;
-    QSharedPointer<ControllerData> upstream;
-    QSharedPointer<ControllerData> downstream;
+    // QSharedPointer<ControllerData> time;
+    // QSharedPointer<ControllerData> upstream;
+    // QSharedPointer<ControllerData> downstream;
+    ControllerData* time;
+    ControllerData* upstream;
+    ControllerData* downstream;
 };

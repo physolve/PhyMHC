@@ -40,8 +40,9 @@ private:
     QPointer<QCPGraph> mGraph2;
     AxisTag *mTag1;
     AxisTag *mTag2;
-    // DataCollection* m_time;
+    DataCollection* m_time;
     // DataCollection** m_sensors; // from controllers
+    QVector<DataCollection*> m_sensors;
     // QTimer* updateTimer;
     bool rescalingON;
     int backlogSize;

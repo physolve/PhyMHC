@@ -64,6 +64,7 @@ public:
     void startTest() override;
     // void setSwitchList(const QList<Switch>& switches);
     // QList<Switch> getSwitchList() const;
+    void testInitialValue();
 private:
     ICPDAS_USBIO* USB_DO; // each device
     // QList<QSharedPointer<Switch>> m_switches;

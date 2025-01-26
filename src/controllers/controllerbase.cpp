@@ -39,15 +39,16 @@ IcpAICtrl::~IcpAICtrl(){
 }
 
 void IcpAICtrl::setData(ControllerData* ptr, DataType type){
-    // switch(type){
-    //     case DataType::TYPE_time: time = QSharedPointer<ControllerData>(ptr); break;
-    //     case DataType::TYPE_tcUp: tcUp = QSharedPointer<ControllerData>(ptr); break;
-    //     case DataType::TYPE_prUp: prUp = QSharedPointer<ControllerData>(ptr); break;
-    //     case DataType::TYPE_flUp: flUp = QSharedPointer<ControllerData>(ptr); break;
-    //     case DataType::TYPE_tcDw: tcDw = QSharedPointer<ControllerData>(ptr); break;
-    //     case DataType::TYPE_prDw: prDw = QSharedPointer<ControllerData>(ptr); break;
-    //     case DataType::TYPE_flDw: flDw = QSharedPointer<ControllerData>(ptr); break;
-    // }
+    switch(type){
+        case DataType::TYPE_time: time = ptr; break;
+        case DataType::TYPE_tcUp: tcUp = ptr; break;
+        case DataType::TYPE_prUp: prUp = ptr; break;
+        case DataType::TYPE_flUp: flUp = ptr; break;
+        case DataType::TYPE_tcDw: tcDw = ptr; break;
+        case DataType::TYPE_prDw: prDw = ptr; break;
+        case DataType::TYPE_flDw: flDw = ptr; break;
+        default: qDebug() << "unknown type";
+    }
 }
 
 int IcpAICtrl::initUSBAI(){
@@ -166,10 +167,6 @@ void IcpDOCtrl::startTest(){
     }
 }
 
-// void IcpDOCtrl::setSwitchList(const QList<Switch> &switches){
-//     m_switches = switches;
-// }
-
-// QList<Switch*> IcpDOCtrl::getSwitchList() const{
-//     return m_switches;
-// }
+void IcpDOCtrl::testInitialValue(){
+    m_switches[0]->setState(true);
+}

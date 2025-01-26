@@ -12,9 +12,6 @@ Rectangle {
     required property string name
     required property var parameters
     
-    Component.onCompleted:{
-        customBack.color = "#536872" //Material.color(Material.Green)
-    }
     ColumnLayout{
         anchors.fill: parent
         anchors.margins: 10

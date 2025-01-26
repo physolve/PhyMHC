@@ -14,6 +14,8 @@ class PhyMHC : public QApplication
     Q_PROPERTY (bool analogConnected READ getAnalogConnected NOTIFY analogConnectedChanged)
     Q_PROPERTY (bool digitalConnected READ getDigitalConnected NOTIFY digitalConnectedChanged)
 
+    // each bool property to each class (valves, heater, cooler, flow)
+
 public:
     PhyMHC(int &argc, char **argvm);
     ~PhyMHC();
@@ -21,17 +23,14 @@ public:
     Q_INVOKABLE void manualTestControllerStart();
 private:
     void initGUI();
-    void initTestData();
-    void initTestController();
-
-    void initAnalogData();
     void initDigitalData();
+    void initTestController();
     bool getDigitalConnected() const;
     bool getAnalogConnected() const;
+    void doInitialTestValue();
 signals:
     void analogConnectedChanged();
     void digitalConnectedChanged();
-
 private:
     
     ScriptBase m_scriptDefault;

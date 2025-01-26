@@ -19,10 +19,12 @@ CustomPlotItem::CustomPlotItem(QQuickItem* parent) : QQuickPaintedItem(parent),
  
 CustomPlotItem::~CustomPlotItem()
 {
-    delete m_CustomPlot;
-    m_CustomPlot = nullptr;
     delete mTag1;
     delete mTag2;
+    m_time = nullptr;
+    m_sensors.clear();
+    delete m_CustomPlot;
+    m_CustomPlot = nullptr;
 }
 
 CustomPlotItem* CustomPlotItem::getCustomPlot()
@@ -144,10 +146,11 @@ void CustomPlotItem::setupPlot(QCustomPlot* customPlot)
 
 void CustomPlotItem::setDataPointers(DataCollection* ptr, DataType type){
     if(type != DataType::TYPE_time) {
-        // m_sensors << QSharedPointer<DataCollection>(ptr);
+        m_sensors << ptr;
+
         return;
     }
-    // m_time = QSharedPointer<DataCollection>(ptr);
+    m_time = ptr;
 }
 
 void CustomPlotItem::dataUpdated()
@@ -158,18 +161,18 @@ void CustomPlotItem::dataUpdated()
     // static double lastPointKey = 0; // making problems being static
     qreal lastPointKey = 0;
 
-    // mGraph1->setData(m_time->getValue(), m_sensors[0]->getValue()); // use add last data for real time
-    // mGraph2->setData(m_time->getValue(), m_sensors[1]->getValue());
+    mGraph1->setData(m_time->getValue(), m_sensors[0]->getValue()); // use add last data for real time
+    mGraph2->setData(m_time->getValue(), m_sensors[1]->getValue());
 
-    // for(auto i = 0; i < m_CustomPlot->graphCount(); ++i){
-    //     if(m_time->getValue().count()!=m_sensors[i]->getValue().count()){ //sync 
-    //         qDebug() << "wrong data in " << m_sensors[i]->m_name;
-    //     } // too freq
-    //     m_CustomPlot->graph(i)->setData(m_time->getValue(), m_sensors[i]->getValue()); // drawing every point, change to last 300, but only for sensors
-    // }
-    // if(lastPointKey < m_time->getCurValue())
-    //     lastPointKey = m_time->getCurValue();
-    // m_CustomPlot->xAxis->setRange(m_CustomPlot->xAxis->range().upper, 10, Qt::AlignRight); // 10 and larger by memory scaling?
+    for(auto i = 0; i < m_CustomPlot->graphCount(); ++i){
+        if(m_time->getValue().count()!=m_sensors[i]->getValue().count()){ //sync 
+            qDebug() << "wrong data in " << m_sensors[i]->m_name;
+        } // too freq
+        m_CustomPlot->graph(i)->setData(m_time->getValue(), m_sensors[i]->getValue()); // drawing every point, change to last 300, but only for sensors
+    }
+    if(lastPointKey < m_time->getCurValue())
+        lastPointKey = m_time->getCurValue();
+    m_CustomPlot->xAxis->setRange(m_CustomPlot->xAxis->range().upper, 10, Qt::AlignRight); // 10 and larger by memory scaling?
     m_CustomPlot->xAxis->rescale();
     m_CustomPlot->xAxis->setRange(m_CustomPlot->xAxis->range().upper, backlogSize, Qt::AlignRight);
     // if(rescalingON){

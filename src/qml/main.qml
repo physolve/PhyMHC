@@ -130,6 +130,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     RowLayout{
                         spacing: 10
+
                         ControllerStatus{
                             name: "USB-2019"
                             parameters: [ "Temperature upstream", "Pressure upstream", "Flow upstream", 
@@ -138,6 +139,13 @@ ApplicationWindow {
                                 //     parameter: "temperature upstream"
                                 // },
                             //]
+                            color: backend.analogConnected ? "#536872" : "#000000"
+                            Connections {
+                                target: backend // backend?
+                                function onAnalogConnectedChanged() { 
+                                    parent.setConnected()
+                                }
+                            }
                         }
                         ControllerStatus{
                             name: "USB-2045"
@@ -145,6 +153,7 @@ ApplicationWindow {
                             "Cooler upstream", "Cooler downstream", "Heater upstream", "Heater downstream", 
                             "skip",
                             "Flow upstream", "Flow downstream"]
+                             color: backend.digitalConnected ? "#536872" : "#000000"
                         }
                     }
                 }

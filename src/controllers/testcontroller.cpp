@@ -1,7 +1,7 @@
 #include "testcontroller.h"
 
 TestController::TestController(QObject *parent) : 
-    QObject(parent), m_timer(new QTimer)
+    QObject(parent), m_timer(new QTimer), time(nullptr), upstream(nullptr), downstream(nullptr)
 {
     connect(m_timer, &QTimer::timeout, this, &TestController::processEvents);
 }
@@ -12,15 +12,15 @@ TestController::~TestController(){
 }
 
 void TestController::setTimeData(ControllerData* ptr){
-    time = QSharedPointer<ControllerData>(ptr);
+    time = ptr;//QSharedPointer<ControllerData>(ptr);
 }
 
 void TestController::setUpstreamData(ControllerData* ptr){
-    upstream = QSharedPointer<ControllerData>(ptr);
+    upstream = ptr;//QSharedPointer<ControllerData>(ptr);
 }
 
 void TestController::setDownstreamData(ControllerData* ptr){
-    downstream = QSharedPointer<ControllerData>(ptr);
+    downstream = ptr;//QSharedPointer<ControllerData>(ptr);
 }
 
 void TestController::startTest(){

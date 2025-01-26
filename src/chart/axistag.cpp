@@ -66,12 +66,12 @@ AxisTag::AxisTag(QCPAxis *parentAxis) :
 
 AxisTag::~AxisTag()
 {
-  if (mDummyTracer)
-    mDummyTracer->parentPlot()->removeItem(mDummyTracer);
-  if (mArrow)
-    mArrow->parentPlot()->removeItem(mArrow);
-  if (mLabel)
-    mLabel->parentPlot()->removeItem(mLabel);
+	if (mDummyTracer)
+  		mDummyTracer->parentPlot()->removeItem(mDummyTracer);
+	if (mArrow)
+		mArrow->parentPlot()->removeItem(mArrow);
+	if (mLabel)
+		mLabel->parentPlot()->removeItem(mLabel);
 }
 
 void AxisTag::setPen(const QPen &pen)

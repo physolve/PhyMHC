@@ -11,10 +11,8 @@ PhyMHC::PhyMHC(int &argc, char **argv):
     timeAnalog("time"), tcUp("Thermocoulpe upstream"), prUp("Pressure upstream"),
     flUp("Flow upstream"), tcDw("Thermocoulpe downstream"), prDw("Pressure downstream"), flDw("Flow downstream")
 {
-    // initTestData();
-    // initAnalogData();
-    // initDigitalData();
-    // initTestController();
+    initDigitalData();
+    initTestController();
     
     initGUI();
 }
@@ -22,10 +20,8 @@ PhyMHC::PhyMHC(int &argc, char **argv):
 PhyMHC::~PhyMHC(){
     m_engine.clearComponentCache();
     // qDebug() << m_testAxisTag;
-    m_testAxisTag = nullptr;
-    // delete testController;
-    // delete analogController;
-    // delete digitalController;
+    delete m_testAxisTag;
+    // m_testAxisTag = nullptr;
 }
 
 void PhyMHC::initGUI(){
@@ -47,22 +43,6 @@ void PhyMHC::initGUI(){
     m_engine.load(url);
 }
 
-void PhyMHC::initTestData(){
-    // time = QSharedPointer<ControllerData>::create("timeData"); // as base class ok?
-    // upstream = QSharedPointer<ControllerData>::create("upstream");
-    // downstream = QSharedPointer<ControllerData>::create("downstream");
-}
-
-void PhyMHC::initAnalogData(){
-    // timeAnalog = QSharedPointer<ControllerData>::create("timeAnalog");
-    // tcUp = QSharedPointer<ControllerData>::create("tcUp");
-    // prUp = QSharedPointer<ControllerData>::create("prUp");
-    // flUp = QSharedPointer<ControllerData>::create("flUp");
-    // tcDw = QSharedPointer<ControllerData>::create("tcDw");
-    // prDw = QSharedPointer<ControllerData>::create("prDw");
-    // flDw = QSharedPointer<ControllerData>::create("flDw");
-}
-
 void PhyMHC::initDigitalData(){
     vUp.m_name = "Valve Upstream"; // port 0, ch0
     vDw.m_name = "Valve Downstream"; // port 0, ch1
@@ -77,30 +57,22 @@ void PhyMHC::initDigitalData(){
 
 void PhyMHC::initTestController(){
     // QList<QSharedPointer<ControllerData>> testStorage = ;
-    // testController.setTimeData(&time);
-    // testController.setUpstreamData(&upstream);
-    // testController.setDownstreamData(&downstream);
-    // analogController.setData(&timeAnalog, DataType::TYPE_time);
-    // analogController.setData(&tcUp, DataType::TYPE_tcUp);
-    // analogController.setData(&prUp, DataType::TYPE_prUp);
-    // analogController.setData(&flUp, DataType::TYPE_flUp);
-    // analogController.setData(&tcDw, DataType::TYPE_tcDw);
-    // analogController.setData(&prDw, DataType::TYPE_prDw);
-    // analogController.setData(&flDw, DataType::TYPE_flDw);
+    testController.setTimeData(&time);
+    testController.setUpstreamData(&upstream);
+    testController.setDownstreamData(&downstream);
+
+    analogController.setData(&timeAnalog, DataType::TYPE_time);
+    analogController.setData(&tcUp, DataType::TYPE_tcUp);
+    analogController.setData(&prUp, DataType::TYPE_prUp);
+    analogController.setData(&flUp, DataType::TYPE_flUp);
+    analogController.setData(&tcDw, DataType::TYPE_tcDw);
+    analogController.setData(&prDw, DataType::TYPE_prDw);
+    analogController.setData(&flDw, DataType::TYPE_flDw);
     analogController.initUSBAI();
     emit analogConnectedChanged();
     // QList<Switch*> swtiches = {&vUp,&vDw,&vSu,&coolUp,&coolDw,&hUp,&hDw};
     Switch *switchList[9] = {&vUp,&vDw,&vSu,&coolUp,&coolDw,&hUp,&hDw,&vflUp,&vflDw};
     digitalController.addSwitchToList(switchList);
-    // digitalController.addSwitchToList(&vUp);
-    // digitalController.addSwitchToList(&vDw);
-    // digitalController.addSwitchToList(&vSu);
-    // digitalController.addSwitchToList(&coolUp);
-    // digitalController.addSwitchToList(&coolDw);
-    // digitalController.addSwitchToList(&hUp);
-    // digitalController.addSwitchToList(&hDw);
-    // digitalController.addSwitchToList(&vflUp);
-    // digitalController.addSwitchToList(&vflDw);
     digitalController.initUSBDO();
     emit digitalConnectedChanged();
 
@@ -118,14 +90,20 @@ bool PhyMHC::getAnalogConnected() const{
 
 void PhyMHC::getCustomPlotPtr(CustomPlotItem* testAxisTag){
     m_testAxisTag = testAxisTag;
-    // m_testAxisTag->setDataPointers(&time, DataType::TYPE_time);
-    // m_testAxisTag->setDataPointers(&upstream, DataType::TYPE_prUp);
-    // m_testAxisTag->setDataPointers(&downstream, DataType::TYPE_prDw);
+    m_testAxisTag->setDataPointers(&time, DataType::TYPE_time);
+    m_testAxisTag->setDataPointers(&upstream, DataType::TYPE_prUp);
+    m_testAxisTag->setDataPointers(&downstream, DataType::TYPE_prDw);
     // Switch *test = new Switch;
-    // m_testAxisTag->initCustomPlot();
-    // connect(&testController, &TestController::valueChanged, m_testAxisTag, &CustomPlotItem::dataUpdated);
+    m_testAxisTag->initCustomPlot();
+    connect(&testController, &TestController::valueChanged, m_testAxisTag, &CustomPlotItem::dataUpdated);
 }
 
 void PhyMHC::manualTestControllerStart(){
     testController.startTest();
+}
+
+void PhyMHC::doInitialTestValue(){
+    digitalController.testInitialValue();
+    // show it on mnemoscheme
+    
 }
