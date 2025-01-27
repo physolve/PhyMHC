@@ -1,7 +1,7 @@
 
 set(EXECUTABLE_NAME "PhyMHC")
 
-project(${EXECUTABLE_NAME} VERSION 0.1 LANGUAGES CXX)
+project(${EXECUTABLE_NAME} VERSION 0.1 )
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -58,12 +58,28 @@ source_group("Chart Source Files" FILES ${CHARTSRC})
 
 add_definitions(-DQCUSTOMPLOT_USE_OPENGL )
 
+add_library(U SHARED icp/Global.h
+                        icp/ICPDAS_USBIO.h
+                        icp/ThreadFun.h
+                        icp/Timer.h
+                        icp/USBIO_Comm.h
+                        icp/USBIO_Device.h
+                        icp/USBIO_Object_Layout.h
+                        )
+
+link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libicp)
+
 qt_add_executable(${EXECUTABLE_NAME}
-    ${HEADERS} ${SOURCES} 
-    ${CONTROLLERHDR} ${CONTROLLERSRC}
-    ${LIBHDR} ${LIBSRC}
-    ${CHARTHDR} ${CHARTSRC}
-    ${QML_RESOURCES}
+${LIBHDR} ${LIBSRC}
+${HEADERS} ${SOURCES} 
+${CONTROLLERHDR} ${CONTROLLERSRC}
+${CHARTHDR} ${CHARTSRC}
+${QML_RESOURCES}
+)
+
+install (TARGETS ${EXECUTABLE_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 target_link_libraries(${EXECUTABLE_NAME}
@@ -74,10 +90,6 @@ target_link_libraries(${EXECUTABLE_NAME}
             Qt6::PrintSupport
             Qt6::SerialPort
             Qt6::OpenGL
-            opengl32
+            # opengl32
+            USBIO_64
 )
-
-# install (TARGETS ${EXECUTABLE_NAME}
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-# )

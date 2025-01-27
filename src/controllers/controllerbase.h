@@ -1,8 +1,9 @@
 #pragma once
 
-#include <windows.h>
-#include "../lib/USBIO_CSWrapper.h"
-#pragma comment(lib, "ICPDAS_USBIO.lib")
+// #include <windows.h>
+// #include "../lib/USBIO_CSWrapper.h"
+// #include "../lib/ICPDAS_USBIO.h"
+// #pragma comment(lib, "ICPDAS_USBIO.lib")
 #include "../datacollection.h"
 #include <QElapsedTimer>
 #include <QTimer>
@@ -42,7 +43,9 @@ private:
     QTimer* m_timer;
     QElapsedTimer m_programmTime;
 
-    ICPDAS_USBIO* USB_AI; // each device
+    // ICPDAS_USBIO* USB_AI; // each device
+    bool USB_AI;
+    int DevNum;
 
     ControllerData* time;
     ControllerData* tcUp;
@@ -66,7 +69,9 @@ public:
     // QList<Switch> getSwitchList() const;
     void testInitialValue();
 private:
-    ICPDAS_USBIO* USB_DO; // each device
+    // ICPDAS_USBIO* USB_DO; // each device
+    bool USB_DO;
+    int DevNum;
     // QList<QSharedPointer<Switch>> m_switches;
     Switch** m_switches;
     // fans // port 1, 0?
