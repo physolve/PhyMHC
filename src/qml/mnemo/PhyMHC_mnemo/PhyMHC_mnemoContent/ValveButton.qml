@@ -46,14 +46,14 @@ RoundButton {
         }
     }
 
-    onDoubleClicked:{
-        if(!doubleClickState){
-            valve.text = "+"
-            doubleClickState = true
-        }
-        else {
-            valve.text = ""
-            doubleClickState = false
-        }
-    }
+    // onDoubleClicked:{
+    //     if(!doubleClickState){
+    //         valve.text = "+"
+    //         doubleClickState = true
+    //     }
+    //     else {
+    //         valve.text = ""
+    //         doubleClickState = false
+    //     }
+    // }
 }

@@ -62,17 +62,18 @@ class IcpDOCtrl : public ControllerBase{
 public:
     IcpDOCtrl(QObject *parent = nullptr);
     virtual ~IcpDOCtrl();
-    void addSwitchToList(Switch** ptr);
+    void addSwitchToList(Switch** ptr, int switchesCnt);
     int initUSBDO();
     void startTest() override;
-    // void setSwitchList(const QList<Switch>& switches);
-    // QList<Switch> getSwitchList() const;
-    void testInitialValue();
+    void updateSwitchState();
+
 private:
     // ICPDAS_USBIO* USB_DO; // each device
     bool USB_DO;
     int DevNum;
+    uint16_t m_total_do;
     // QList<QSharedPointer<Switch>> m_switches;
+    int m_switchesCnt;
     Switch** m_switches;
     // fans // port 1, 0?
     // flow valves // port 2, 0?

@@ -55,7 +55,7 @@ struct Switch{
     void setState(bool s){
         m_state = s;
     }
-    bool getState(){
+    bool getState() const{
        return m_state; 
     }
     Switch(const QString &name = "unknown", const bool &state = false): m_name(name), m_state(state) { }

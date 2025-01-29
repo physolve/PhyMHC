@@ -48,8 +48,8 @@ Rectangle {
 
     Switch {
         id: _sampleSwitch
-        x: 82
-        y: -27
+        x: 140
+        y: -25
         text: qsTr("Sample")
         onClicked: scriptDefault.sampleSwitchChanged(checked)
     }

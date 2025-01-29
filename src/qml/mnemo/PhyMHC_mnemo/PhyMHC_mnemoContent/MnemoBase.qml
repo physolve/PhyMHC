@@ -26,15 +26,17 @@ Item {
         id: valveUps
         x: 719
         y: 315
-        checked: scriptDefault.mnemo.valveUpstream
-        onClicked: scriptDefault.valveUpstreamChanged(checked)
+        checked: backend.vUpState // scriptDefault.mnemo.valveUpstream
+        // onClicked: scriptDefault.valveUpstreamChanged(checked)
+        onClicked: backend.vUpState = checked
     }
     ValveButton {
         z: 1
         id: valveDowns
         x: 325
         y: 507
-        checked: scriptDefault.mnemo.valveDownstream
+        checked: backend.vDwState // scriptDefault.mnemo.valveDownstream
+        onClicked: backend.vDwState = checked
     }
     Connections{
         target: scriptDefault
@@ -50,21 +52,40 @@ Item {
         x: 203
         y: 144
     }
+    Switch{
+        x: 203
+        y: 120
+        z: 0
+        text: qsTr("Heater")
+        checked: backend.hUpState
+        onClicked: backend.hUpState = checked
+    }
 
     Cooler{
         z: 0
         x: 218
         y: 199
+        cooling: backend.coolUpState
     }
     Cooler {
         x: 303
         y: 199
         z: 0
+        cooling: backend.coolUpState
     }
     Cooler {
         x: 388
         y: 199
         z: 0
+        cooling: backend.coolUpState
+    }
+    Switch{
+        x: 470
+        y: 210
+        z: 0
+        text: qsTr("Fans")
+        checked: backend.coolUpState
+        onClicked: backend.coolUpState = checked
     }
 
     Reactor {

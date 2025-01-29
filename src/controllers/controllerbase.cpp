@@ -41,9 +41,7 @@ IcpAICtrl::~IcpAICtrl(){
         // CloseDevice(USB_AI);
         // CloseDevice(USB_AI);
         // USB_AI = nullptr;
-        // auto res = USBIO_CloseDevice(DevNum);
-        printf("USB I/O Library Version : %s\n", USBIO_GetLibraryVersion());
-
+        auto res = USBIO_CloseDevice(DevNum);
     }
     if(m_timer->isActive()) m_timer->stop();
     qDebug() << "IcpAICtrl destructor";
@@ -63,7 +61,24 @@ void IcpAICtrl::setData(ControllerData* ptr, DataType type){
 }
 
 int IcpAICtrl::initUSBAI(){
-    int iErrCode;
+    //linux base
+    int DeviceID = USB2019;
+    BYTE BoardID = 0x1;
+    BYTE module_name[15], total_ai, o_byAIChStatus[USBIO_AI_MAX_CHANNEL];
+
+	BYTE status[3][15] = {"Channel Good","Channel Over","Channel Under"};
+    auto res = USBIO_OpenDevice(DeviceID, BoardID, &DevNum);
+
+    if (res){
+        qDebug() << QString("OpenDevice error Erro : 0x%1\r").arg(res);
+        res = USBIO_CloseDevice(DevNum);
+        return -1;
+    }
+    // USBIO_ModuleName(DevNum, module_name);
+	USBIO_GetAITotal(DevNum, &total_ai);
+
+    //windows base
+    // int iErrCode;
     // WORD wFWVer;
     // BYTE bySupIOMask, byDeviceNickName[32], byDeviceSN[32];
 
@@ -88,7 +103,13 @@ int IcpAICtrl::initUSBAI(){
 }
 
 void IcpAICtrl::tempFunctionToSetChannelsType(){
-    int iErrCode;
+    // linux base
+    auto res = USBIO_AI_SetTypeCodeToChannel(DevNum, 0, 0x0F);
+    if (res){
+        qDebug() << QString("SetTypeCode error Erro : 0x%1\r").arg(res);
+    }
+    // windows base
+    // int iErrCode;
     // this function set Type K thermocouple Type to channel 0
     // other types are: 0x08 -> -10 V ~ +10 V, 0x09 -> -5 V ~ +5 V, 0x1A  -> 0 ~ +20 mA 
     // if(ERR_NO_ERR != (iErrCode = AI_SetTypeCode(USB_AI, 0, 0x0F))){
@@ -102,9 +123,33 @@ void IcpAICtrl::startTest(){
 }
 
 void IcpAICtrl::processEvents(){
-    int iErrCode;
-    // float o_fAIValue[USBIO_AI_MAX_CHANNEL];
+    // linux base
+    float o_fAIValue[USBIO_AI_MAX_CHANNEL];
+    auto res = USBIO_AI_ReadValueFloat(DevNum, o_fAIValue);
+    if (res){
+        qDebug() << QString("SetTypeCode error Erro : 0x%1\r").arg(res);
+        connectionState = false;
+        // emit disconnect state
+        return;
+    }
 
+    time->addPoint(m_programmTime.elapsed()/1000.);
+
+    // those points should be recalculated inside each
+
+    tcUp->addPoint(o_fAIValue[0]);
+    prUp->addPoint(o_fAIValue[1]);
+    flUp->addPoint(o_fAIValue[2]);
+    tcDw->addPoint(o_fAIValue[3]);
+    prDw->addPoint(o_fAIValue[4]);
+    flDw->addPoint(o_fAIValue[5]);
+    
+    emit valueChanged();
+    // some ending action check
+
+    // windows base
+    // int iErrCode;
+    // float o_fAIValue[USBIO_AI_MAX_CHANNEL];
     // if(ERR_NO_ERR != (iErrCode = AI_ReadValueAnalog(USB_AI, o_fAIValue))){
     //     qDebug() << QString::number(iErrCode);
     //     connectionState = false;
@@ -115,11 +160,11 @@ void IcpAICtrl::processEvents(){
     //         qDebug() << QString::number(o_fAIValue[iIdx]);
     //     }
     // }
-    emit valueChanged();   
+    // emit valueChanged();   
 }
 
 IcpDOCtrl::IcpDOCtrl(QObject *parent) : 
-    ControllerBase(parent), USB_DO(false)//USB_DO(nullptr)
+    ControllerBase(parent), USB_DO(false), m_switchesCnt(0)//USB_DO(nullptr)
 {
     name = "IcpDOCtrl";
 }
@@ -129,17 +174,40 @@ IcpDOCtrl::~IcpDOCtrl(){
         // CloseDevice(USB_DO);
         // USB_DO = nullptr;
         // USBIO_CloseDevice(DevNum);
+        auto res = USBIO_CloseDevice(DevNum);
     }
     qDebug() << "IcpDOCtrl destructor";
 }
 
-void IcpDOCtrl::addSwitchToList(Switch** ptr){
+void IcpDOCtrl::addSwitchToList(Switch** ptr, int switchesCnt){
     // m_switches.append(QSharedPointer<Switch>(ptr));
     m_switches = ptr;
+    m_switchesCnt = switchesCnt;
 }
 
 int IcpDOCtrl::initUSBDO(){
-    int iErrCode;
+    // linux base
+    int res;
+	int DeviceID = USB2045;
+	BYTE BoardID = 0x1;
+	BYTE module_name[15], total_do;
+
+    res = USBIO_OpenDevice(DeviceID, BoardID, &DevNum);
+
+    if (res){
+        qDebug() << QString("OpenDevice error Erro : 0x%1\r").arg(res);
+        res = USBIO_CloseDevice(DevNum);
+        return -1;
+    }
+    // USBIO_ModuleName(DevNum, module_name);
+	USBIO_GetDOTotal(DevNum, &total_do); // DI?
+
+    m_total_do = total_do;
+
+    qDebug() << "Switches count = " << m_switchesCnt;
+    qDebug() << "total_do =  " << m_total_do;
+    // windows base
+    // int iErrCode;
     // WORD wFWVer;
     // BYTE bySupIOMask, byDeviceNickName[32], byDeviceSN[32];
 
@@ -156,29 +224,53 @@ int IcpDOCtrl::initUSBDO(){
     // GetSupportIOMask(USB_DO, &bySupIOMask);
     // GetDeviceNickName(USB_DO, byDeviceNickName);
     // GetDeviceSN(USB_DO, byDeviceSN);
-
     // GetDOTotal(USB_DO, &m_byDOTotal);
     return 0;
 }
 
 void IcpDOCtrl::startTest(){
-    // BYTE o_byDORead[2];
-    
-    // DO_ReadValue(USB_DO, o_byDORead);
-
+    DWORD DOValue = 0xf; // or [2]?
+    auto res = USBIO_DO_ReadValue(DevNum, &DOValue);
+    if (res){
+        qDebug() << QString("SetTypeCode error Erro : 0x%1\r").arg(res);
+        connectionState = false;
+        // emit disconnect state
+        return;
+    }
     QVector<bool> vector;
-    for(int j = 0; j < 7; ++j){
-        // vector.append(o_byDORead[0]>>j&0x1); // from back
+    for(auto i = 0; i < m_total_do; ++i){
+        vector.append(DOValue >> i&0x1);
     }
-    for(int j = 0; j < 2; ++j){
-        // vector.append(o_byDORead[1]>>j&0x1); // from back
-    }
-    // auto it_begin = m_switches.begin();
-    for(auto i = 0; i < vector.size(); ++i){
+    // could it be a template?
+    for(auto i = 0; i < m_switchesCnt; ++i){
         m_switches[i]->setState(vector[i]);
     }
+    //windows base
+    // BYTE o_byDORead[2];
+    // DO_ReadValue(USB_DO, o_byDORead);
+    // for(int j = 0; j < 7; ++j){
+    //     vector.append(o_byDORead[0]>>j&0x1); // from back
+    // }
+    // for(int j = 0; j < 2; ++j){
+    //     vector.append(o_byDORead[1]>>j&0x1); // from back
+    // }
+    // auto it_begin = m_switches.begin();
+    // for(auto i = 0; i < vector.size(); ++i){
+    //     m_switches[i]->setState(vector[i]);
+    // }
 }
 
-void IcpDOCtrl::testInitialValue(){
-    m_switches[0]->setState(true);
+void IcpDOCtrl::updateSwitchState(){
+    DWORD DOValue = 0; // or [2]?
+    for(auto i = 0; i < m_switchesCnt; ++i){
+        if(m_switches[i]->getState())
+            DOValue|=1u<<i;
+    }
+    auto res = USBIO_DO_WriteValue(DevNum, &DOValue);
+    if (res){
+        qDebug() << QString("SetTypeCode error Erro : 0x%1\r").arg(res);
+        connectionState = false;
+        // emit disconnect state
+        return;
+    }
 }
