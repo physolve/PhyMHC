@@ -28,7 +28,6 @@ public:
     QString m_name;
 protected:
     QList<double> m_y; // one second data
-
 };
 
 // time data class

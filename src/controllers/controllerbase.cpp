@@ -262,6 +262,7 @@ void IcpDOCtrl::startTest(){
 
 void IcpDOCtrl::updateSwitchState(){
     DWORD DOValue = 0; // or [2]?
+    // but m_switchesCnt less or equal 8
     for(auto i = 0; i < m_switchesCnt; ++i){
         if(m_switches[i]->getState())
             DOValue|=1u<<i;

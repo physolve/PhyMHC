@@ -23,20 +23,20 @@ Item {
     }
     ValveButton {
         z: 1
-        id: valveUps
+        id: valveDowns
         x: 719
         y: 315
-        checked: backend.vUpState // scriptDefault.mnemo.valveUpstream
-        // onClicked: scriptDefault.valveUpstreamChanged(checked)
-        onClicked: backend.vUpState = checked
+        checked: backend.vDwState // scriptDefault.mnemo.valveDownstream
+        onClicked: backend.vDwState = checked
     }
     ValveButton {
         z: 1
-        id: valveDowns
+        id: valveUps
         x: 325
         y: 507
-        checked: backend.vDwState // scriptDefault.mnemo.valveDownstream
-        onClicked: backend.vDwState = checked
+        checked: backend.vUpState // scriptDefault.mnemo.valveUpstream
+        // onClicked: scriptDefault.valveUpstreamChanged(checked)
+        onClicked: backend.vUpState = checked
     }
     Connections{
         target: scriptDefault

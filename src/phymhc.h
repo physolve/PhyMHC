@@ -14,6 +14,8 @@ class PhyMHC : public QApplication
     Q_PROPERTY (bool analogConnected READ getAnalogConnected NOTIFY analogConnectedChanged)
     Q_PROPERTY (bool digitalConnected READ getDigitalConnected NOTIFY digitalConnectedChanged)
 
+    Q_PROPERTY (mnemoValues guiVals READ getGuiVals NOTIFY guiValsChanged) //WRITE setExpTimingStruct 
+
     // each bool property to each class (valves, heater, cooler, flow)
     Q_PROPERTY (bool vUpState READ getVUp WRITE setVUp NOTIFY vUpChanged)
     Q_PROPERTY (bool vDwState READ getVDw WRITE setVDw NOTIFY vDwChanged)
@@ -65,6 +67,8 @@ signals:
     void analogConnectedChanged();
     void digitalConnectedChanged();
 
+    void guiValsChanged();
+
     void vUpChanged();
     void vDwChanged();
     void vSuChanged();
@@ -73,6 +77,10 @@ signals:
     void hUpChanged();
     void hDwChanged();
     void vVaChanged();
+
+private slots:
+    void guiValsUpdate();
+
 private:
     
     ScriptBase m_scriptDefault;
@@ -81,9 +89,9 @@ private:
 
     // create objects for controllers. DO valves, fans, flow, heaters. AI pressure, thermocouples, flow 
     TestController testController;
-    ControllerData time;
-    ControllerData upstream;
-    ControllerData downstream;
+    // ControllerData time;
+    // ControllerData upstream;
+    // ControllerData downstream;
 
     IcpAICtrl analogController;
 
@@ -110,4 +118,7 @@ private:
     Switch vflDw; // port 2, ch1
 
     CustomPlotItem* m_testAxisTag;
+
+    mnemoValues m_guiVals;
+    mnemoValues getGuiVals() const;
 };

@@ -7,7 +7,7 @@
 
 PhyMHC::PhyMHC(int &argc, char **argv): 
     QApplication(argc, argv), m_scriptDefault(), m_testAxisTag(nullptr),
-    time("time"), upstream("upstream"), downstream("downstream"),
+    // time("time"), upstream("upstream"), downstream("downstream"),
     timeAnalog("time"), tcUp("Thermocoulpe upstream"), prUp("Pressure upstream"),
     flUp("Flow upstream"), tcDw("Thermocoulpe downstream"), prDw("Pressure downstream"), flDw("Flow downstream")
 {
@@ -56,9 +56,9 @@ void PhyMHC::initDigitalData(){
 }
 
 void PhyMHC::initTestController(){
-    testController.setTimeData(&time);
-    testController.setUpstreamData(&upstream);
-    testController.setDownstreamData(&downstream);
+    testController.setTimeData(&timeAnalog);
+    testController.setUpstreamData(&flUp);
+    testController.setDownstreamData(&flDw);
 }
 
 void PhyMHC::icpAiController(){
@@ -71,6 +71,11 @@ void PhyMHC::icpAiController(){
     analogController.setData(&flDw, DataType::TYPE_flDw);
     analogController.initUSBAI();
     emit analogConnectedChanged();
+
+    connect(&analogController, &IcpAICtrl::valueChanged, this, &PhyMHC::guiValsUpdate);
+    // if ok start test
+    if(analogController.isConnected())
+        analogController.startTest();
 }
 
 void PhyMHC::icpDoController(){
@@ -79,7 +84,10 @@ void PhyMHC::icpDoController(){
     digitalController.addSwitchToList(switchList, 8);
     digitalController.initUSBDO();
     emit digitalConnectedChanged();
-    if(digitalController.isConnected()) digitalController.startTest(); 
+    if(digitalController.isConnected()){
+        digitalController.startTest();
+        doValveChange();
+    }
 }
 
 bool PhyMHC::getDigitalConnected() const{
@@ -93,10 +101,13 @@ bool PhyMHC::getAnalogConnected() const{
 
 void PhyMHC::getCustomPlotPtr(CustomPlotItem* testAxisTag){
     m_testAxisTag = testAxisTag;
-    m_testAxisTag->setDataPointers(&time, DataType::TYPE_time);
-    m_testAxisTag->setDataPointers(&upstream, DataType::TYPE_prUp);
-    m_testAxisTag->setDataPointers(&downstream, DataType::TYPE_prDw);
+    // m_testAxisTag->setDataPointers(&time, DataType::TYPE_time);
+    // m_testAxisTag->setDataPointers(&upstream, DataType::TYPE_prUp);
+    // m_testAxisTag->setDataPointers(&downstream, DataType::TYPE_prDw);
     // Switch *test = new Switch;
+    DataCollection* chartPtrs[3] = {&timeAnalog, &flUp, &flDw};
+    m_testAxisTag->setDataPointers(chartPtrs, 3);
+    
     m_testAxisTag->initCustomPlot();
     connect(&testController, &TestController::valueChanged, m_testAxisTag, &CustomPlotItem::dataUpdated);
 }
@@ -104,6 +115,16 @@ void PhyMHC::getCustomPlotPtr(CustomPlotItem* testAxisTag){
 void PhyMHC::doValveChange(){
     if(digitalController.isConnected())
         digitalController.updateSwitchState();
+}
+
+void PhyMHC::guiValsUpdate(){
+    m_guiVals.m_flowUpstream = flUp.getCurValue();
+    m_guiVals.m_flowDownstream = flDw.getCurValue();
+    emit guiValsChanged();
+}
+
+mnemoValues PhyMHC::getGuiVals() const{
+    return m_guiVals;
 }
 
 // from script
