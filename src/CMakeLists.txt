@@ -9,6 +9,10 @@ set(CMAKE_AUTORCC ON)
 
 qt_add_resources(QML_RESOURCES resources.qrc)
 
+if(NOT DEFINED ICPHDR)
+    file(GLOB ICPHDR ${CMAKE_CURRENT_SOURCE_DIR}/icp/*.h)
+endif()
+
 if(NOT DEFINED HEADERS)
     file(GLOB HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 endif()
@@ -43,6 +47,7 @@ endif()
 
 # file(GLOB CPP_CONTROLLERS src/controllers/*.cpp)
 # file(GLOB HPP_CONTROLLERS src/controllers/*.h)
+source_group("ICP DAS" FILES ${ICPHDR})
 
 source_group("Header Files" FILES ${HEADERS})
 source_group("Source Files" FILES ${SOURCES})
@@ -56,20 +61,18 @@ source_group("Lib Source Files" FILES ${LIBSRC})
 source_group("Chart Header Files" FILES ${CHARTHDR})
 source_group("Chart Source Files" FILES ${CHARTSRC})
 
+
 add_definitions(-DQCUSTOMPLOT_USE_OPENGL )
 
-add_library(U SHARED icp/Global.h
-                        icp/ICPDAS_USBIO.h
-                        icp/ThreadFun.h
-                        icp/Timer.h
-                        icp/USBIO_Comm.h
-                        icp/USBIO_Device.h
-                        icp/USBIO_Object_Layout.h
-                        )
+# add_library(U SHARED    icp/ICPDAS_USBIO.h
+#                         # icp/Var.h
+#                         icp/USBIO_CSWrapper.h
+#  )
 
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libicp)
+# link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libicp)
 
 qt_add_executable(${EXECUTABLE_NAME}
+${ICPHDR}
 ${LIBHDR} ${LIBSRC}
 ${HEADERS} ${SOURCES} 
 ${CONTROLLERHDR} ${CONTROLLERSRC}
@@ -77,10 +80,10 @@ ${CHARTHDR} ${CHARTSRC}
 ${QML_RESOURCES}
 )
 
-install (TARGETS ${EXECUTABLE_NAME}
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
+# install (TARGETS ${EXECUTABLE_NAME}
+#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+# )
 
 target_link_libraries(${EXECUTABLE_NAME}
     PRIVATE Qt6::Core
@@ -90,6 +93,7 @@ target_link_libraries(${EXECUTABLE_NAME}
             Qt6::PrintSupport
             Qt6::SerialPort
             Qt6::OpenGL
-            # opengl32
-            USBIO_64
+            opengl32
+            # ICPDAS_USBIO
+            # USBIO_64
 )

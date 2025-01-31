@@ -24,7 +24,7 @@ public:
     void backgroundCustomPlot();
     void setupPlot(QCustomPlot* customPlot);
 
-    void setDataPointers(DataCollection** ptr, int ptrCnt);
+    void setDataPointers(DataCollection** ptr , int ptrCnt);
 protected:
     void routeMouseEvents( QMouseEvent* event );
     void routeWheelEvents(QWheelEvent *event);

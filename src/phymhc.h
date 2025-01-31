@@ -14,7 +14,7 @@ class PhyMHC : public QApplication
     Q_PROPERTY (bool analogConnected READ getAnalogConnected NOTIFY analogConnectedChanged)
     Q_PROPERTY (bool digitalConnected READ getDigitalConnected NOTIFY digitalConnectedChanged)
 
-    Q_PROPERTY (mnemoValues guiVals READ getGuiVals NOTIFY guiValsChanged) //WRITE setExpTimingStruct 
+    Q_PROPERTY (guiValues guiVals READ getGuiVals NOTIFY guiValsChanged) //WRITE setExpTimingStruct 
 
     // each bool property to each class (valves, heater, cooler, flow)
     Q_PROPERTY (bool vUpState READ getVUp WRITE setVUp NOTIFY vUpChanged)
@@ -43,7 +43,7 @@ private:
     bool getDigitalConnected() const;
     bool getAnalogConnected() const;
 
-    void doValveChange();
+    bool doSwitchChange();
 
     void setVUp(bool state);
     void setVDw(bool state);
@@ -114,11 +114,11 @@ private:
     Switch hDw; // port 0, ch6 
     Switch vVa; // port 0, ch7
     // unused
-    Switch vflUp; // port 1, ch0
-    Switch vflDw; // port 2, ch1
+    // Switch vflUp; // port 1, ch0
+    // Switch vflDw; // port 2, ch1
 
     CustomPlotItem* m_testAxisTag;
 
-    mnemoValues m_guiVals;
-    mnemoValues getGuiVals() const;
+    guiValues m_guiVals;
+    guiValues getGuiVals() const;
 };

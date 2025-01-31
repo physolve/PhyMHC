@@ -145,6 +145,7 @@ void CustomPlotItem::setupPlot(QCustomPlot* customPlot)
 }
 
 void CustomPlotItem::setDataPointers(DataCollection** ptr, int ptrCnt){
+    // not good but it works
     m_time = ptr[0];
     for(auto i = 1; i < ptrCnt; ++i){
         m_sensors.append(ptr[i]);

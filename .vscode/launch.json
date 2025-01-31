@@ -6,21 +6,20 @@
     "configurations": [
         {
             "name": "PhyMHC",
-            "type": "cppdbg",
+            "type": "cppvsdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
-            // "visualizerFile": "${command:qt-cpp.natvis}",
-            // "windows": {
-            //     "environment": [
-            //         {
-            //             "name": "PATH",
-            //             "value": "${env:PATH};${command:qt-cpp.kitDirectory}${/}bin"
-            //         }
-            //     ]
-            // }
+            "visualizerFile": "${command:qt-cpp.natvis}",
+            "windows": {
+                "environment": [
+                    {
+                        "name": "PATH",
+                        "value": "${env:PATH};${command:qt-cpp.kitDirectory}${/}bin"
+                    }
+                ]
+            }
         }
-
     ]
 }

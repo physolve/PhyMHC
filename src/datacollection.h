@@ -14,6 +14,26 @@ enum DataType{
     TYPE_flDw
 };
 
+struct guiValues{ // sample
+    Q_GADGET
+    // it might be linked to json for import and multi-result log
+    Q_PROPERTY (double temperatureUpstream MEMBER m_temperatureUpstream)
+    Q_PROPERTY (double pressureUpstream MEMBER m_pressureUpstream)
+    Q_PROPERTY (double flowUpstream MEMBER m_flowUpstream)
+    Q_PROPERTY (double temperatureDownstream MEMBER m_temperatureDownstream)
+    Q_PROPERTY (double pressureDownstream MEMBER m_pressureDownstream)
+    Q_PROPERTY (double flowDownstream MEMBER m_flowDownstream)
+public:
+    double m_temperatureUpstream; // C
+    double m_pressureUpstream; // bar
+    double m_flowUpstream; // slpm
+    double m_flowUpstreamMoles; // moles per second
+    double m_temperatureDownstream; // C
+    double m_pressureDownstream; // bar
+    double m_flowDownstream; // slpm
+    double m_flowDownstreamMoles; // slpm
+};
+
 class DataCollection //: public QObject
 {
     //Q_OBJECT
@@ -35,8 +55,13 @@ protected:
 class ControllerData : public DataCollection
 {
 public:
-    ControllerData(const QString &name);
+    ControllerData(const QString &name, const double& A = 1, const double& B = 0);
     virtual ~ControllerData();
+    void setCoeffs(const double& A, const double& B);
+    void addValue(const double &val_y);
+private:
+    double lin_A;
+    double lin_B;
 };
 
 class ExpData : public DataCollection

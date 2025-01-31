@@ -22,7 +22,7 @@ Rectangle {
 
         Label {
             id: label
-            text: Number(sensor.value.toPrecision(5))
+            text: Number(sensor.value.toPrecision(3)).toLocaleString('g') // idk
             font.pixelSize: 17
             color: "white"
             anchors.left: parent.left
