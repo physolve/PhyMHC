@@ -7,13 +7,14 @@
 
 PhyMHC::PhyMHC(int &argc, char **argv): 
     QApplication(argc, argv), m_scriptDefault(), m_testAxisTag(nullptr),
-    time("time"), upstream("upstream"), downstream("downstream"),
+    // time("time"), upstream("upstream"), downstream("downstream"),
     timeAnalog("time"), tcUp("Thermocoulpe upstream"), prUp("Pressure upstream"),
     flUp("Flow upstream"), tcDw("Thermocoulpe downstream"), prDw("Pressure downstream"), flDw("Flow downstream")
 {
     initDigitalData();
     initTestController();
-    
+    icpAiController();
+    icpDoController();
     initGUI();
 }
 
@@ -44,6 +45,13 @@ void PhyMHC::initGUI(){
 }
 
 void PhyMHC::initDigitalData(){
+    tcUp.setCoeffs(1.0, 0.0);
+    prUp.setCoeffs(15.618, -14.977);
+    flUp.setCoeffs(10.0, 0.0);
+    tcDw.setCoeffs(1.0, 0.0);
+    prDw.setCoeffs(15.618, -14.977);
+    flDw.setCoeffs(10.0, 0.0);
+
     vUp.m_name = "Valve Upstream"; // port 0, ch0
     vDw.m_name = "Valve Downstream"; // port 0, ch1
     vSu.m_name = "Valve Supply"; // port 0, ch2
@@ -51,16 +59,27 @@ void PhyMHC::initDigitalData(){
     coolDw.m_name = "Cooler Downstream"; // port 0, ch4
     hUp.m_name = "Heater Upstream"; // port 0, ch5
     hDw.m_name = "Heater Downstream"; // port 0, ch6 
-    vflUp.m_name = "Valve Flow Upstream"; // port 1, ch0
-    vflDw.m_name = "Valve Flow Downstream"; // port 2, ch1
+    
+    // vflUp.m_name = "Valve Flow Upstream"; // port 1, ch0
+    // vflDw.m_name = "Valve Flow Downstream"; // port 2, ch1
+
+    m_guiVals.m_temperatureUpstream = 0.0;
+    m_guiVals.m_pressureUpstream = 0.0;
+    m_guiVals.m_flowUpstream = 0.0;
+    m_guiVals.m_flowUpstreamMoles = 0.000001;
+    m_guiVals.m_temperatureDownstream = 0.0;
+    m_guiVals.m_pressureDownstream = 0.0;
+    m_guiVals.m_flowDownstream = 0.0;
+    m_guiVals.m_flowDownstreamMoles = 0.000001;
 }
 
 void PhyMHC::initTestController(){
-    // QList<QSharedPointer<ControllerData>> testStorage = ;
-    testController.setTimeData(&time);
-    testController.setUpstreamData(&upstream);
-    testController.setDownstreamData(&downstream);
+    testController.setTimeData(&timeAnalog);
+    testController.setUpstreamData(&flUp);
+    testController.setDownstreamData(&flDw);
+}
 
+void PhyMHC::icpAiController(){
     analogController.setData(&timeAnalog, DataType::TYPE_time);
     analogController.setData(&tcUp, DataType::TYPE_tcUp);
     analogController.setData(&prUp, DataType::TYPE_prUp);
@@ -70,12 +89,31 @@ void PhyMHC::initTestController(){
     analogController.setData(&flDw, DataType::TYPE_flDw);
     analogController.initUSBAI();
     emit analogConnectedChanged();
-    // QList<Switch*> swtiches = {&vUp,&vDw,&vSu,&coolUp,&coolDw,&hUp,&hDw};
-    Switch *switchList[9] = {&vUp,&vDw,&vSu,&coolUp,&coolDw,&hUp,&hDw,&vflUp,&vflDw};
-    digitalController.addSwitchToList(switchList);
+
+    connect(&analogController, &IcpAICtrl::valueChanged, this, &PhyMHC::guiValsUpdate);
+    // if ok start test
+    if(analogController.isConnected()){
+        analogController.startTest();
+    }
+}
+
+void PhyMHC::icpDoController(){
+    Switch *switchList[8] = {&vUp, &vDw, &vVa, &coolUp, &coolDw, &hUp, &hDw, &vSu};
+    digitalController.addSwitchToList(*switchList, 8);
     digitalController.initUSBDO();
     emit digitalConnectedChanged();
-
+    if(digitalController.isConnected()){
+        digitalController.startTest();
+        // doSwitchChange();
+        emit vUpChanged();
+        emit vDwChanged();
+        emit vSuChanged();
+        emit coolUpChanged();
+        emit coolDwChanged();
+        emit hUpChanged();
+        emit hDwChanged();
+        emit vVaChanged();
+    }
 }
 
 bool PhyMHC::getDigitalConnected() const{
@@ -87,23 +125,143 @@ bool PhyMHC::getAnalogConnected() const{
     return analogController.isConnected();
 }
 
-
 void PhyMHC::getCustomPlotPtr(CustomPlotItem* testAxisTag){
     m_testAxisTag = testAxisTag;
-    m_testAxisTag->setDataPointers(&time, DataType::TYPE_time);
-    m_testAxisTag->setDataPointers(&upstream, DataType::TYPE_prUp);
-    m_testAxisTag->setDataPointers(&downstream, DataType::TYPE_prDw);
-    // Switch *test = new Switch;
+    DataCollection* chartPtrs[3] = {&timeAnalog, &flUp, &flDw};
+    m_testAxisTag->setDataPointers(chartPtrs, 3);
+    
     m_testAxisTag->initCustomPlot();
     connect(&testController, &TestController::valueChanged, m_testAxisTag, &CustomPlotItem::dataUpdated);
+    connect(&analogController, &IcpAICtrl::valueChanged, m_testAxisTag, &CustomPlotItem::dataUpdated);
 }
 
+bool PhyMHC::doSwitchChange(){
+    if(!digitalController.isConnected())
+        return false;
+    return digitalController.updateSwitchState();
+}
+
+void PhyMHC::guiValsUpdate(){
+    m_guiVals.m_flowUpstream = flUp.getCurValue();
+    m_guiVals.m_flowDownstream = flDw.getCurValue();
+    m_guiVals.m_temperatureUpstream = tcUp.getCurValue();
+    m_guiVals.m_temperatureDownstream = tcDw.getCurValue();
+    m_guiVals.m_pressureUpstream = prUp.getCurValue();
+    m_guiVals.m_pressureDownstream = prDw.getCurValue();
+    emit guiValsChanged();
+}
+
+guiValues PhyMHC::getGuiVals() const{
+    return m_guiVals;
+}
+
+// from script
 void PhyMHC::manualTestControllerStart(){
     testController.startTest();
 }
 
-void PhyMHC::doInitialTestValue(){
-    digitalController.testInitialValue();
-    // show it on mnemoscheme
-    
+void PhyMHC::setVUp(bool state){
+    // Valve upstream handler
+    if(vUp.getState() == state)
+        return;
+    vUp.setState(state);
+    // vUp.setState( vUpHandle(state) ) // handle undo state
+    if(!doSwitchChange()) // undo state
+        vUp.setState(!state); // handles + set State to doSwitchChange return bool!
+    emit vUpChanged();
+}
+void PhyMHC::setVDw(bool state){
+    // Valve downstream handler
+    if(vDw.getState() == state)
+        return;
+    vDw.setState(state);
+    // vDw.setState( vDwHandle(state) ) 
+    if(!doSwitchChange()) // undo state
+        vDw.setState(!state);
+    emit vDwChanged();
+}
+void PhyMHC::setVSu(bool state){
+    // Valve supply handler
+    if(vSu.getState() == state)
+        return;
+    vSu.setState(state);
+    // vSu.setState( vSuHandle(state) ) 
+    if(!doSwitchChange()) // undo state
+        vSu.setState(!state);
+    emit vSuChanged();
+}
+void PhyMHC::setCoolUp(bool state){
+    // Cooler upstream manual turn handler
+    if(coolUp.getState() == state)
+        return;
+    coolUp.setState(state);
+    // coolUp.setState( coolUpHandle(state) )
+    if(!doSwitchChange()) // undo state
+        coolUp.setState(!state); 
+    emit coolUpChanged();
+}
+void PhyMHC::setCoolDw(bool state){
+    // Cooler upstream manual turn handler
+    if(coolDw.getState() == state)
+        return;
+    coolDw.setState(state);
+    // coolDw.setState( coolDwHandle(state) )
+    if(!doSwitchChange()) // undo state
+        coolDw.setState(!state); 
+    emit coolDwChanged();
+}
+void PhyMHC::setHUp(bool state){
+    // Heater upstream manual turn handler
+    if(hUp.getState() == state)
+        return;
+    hUp.setState(state);
+    // hUp.setState( hUpHandle(state) )
+    if(!doSwitchChange()) // undo state
+        hUp.setState(!state); 
+    emit hUpChanged();
+}
+void PhyMHC::setHDw(bool state){
+    // Heater upstream manual turn handler
+    if(hDw.getState() == state)
+        return;
+    hDw.setState(state);
+    // hDw.setState( hDwHandle(state) )
+    if(!doSwitchChange()) // undo state
+        hDw.setState(!state);
+    emit hDwChanged();
+}
+void PhyMHC::setVVa(bool state){
+    // Valve vacuum handler
+    if(vVa.getState() == state)
+        return;
+    vVa.setState(state);
+    // vVa.setState( vVaHandle(state) )
+    if(!doSwitchChange()) // undo state
+        vVa.setState(!state);
+    emit vVaChanged();
+}
+
+bool PhyMHC::getVUp() const{
+    return vUp.getState();;
+}
+bool PhyMHC::getVDw() const{
+    return vDw.getState();
+}
+bool PhyMHC::getVSu() const{
+    return vSu.getState();
+}
+bool PhyMHC::getCoolUp() const{
+    return coolUp.getState();
+}
+bool PhyMHC::getCoolDw() const{
+    return coolDw.getState();
+}
+bool PhyMHC::getHUp() const{
+    return hUp.getState();
+}
+bool PhyMHC::getHDw() const{
+    return hDw.getState();
+}
+bool PhyMHC::getVVa() const{
+    return vVa.getState();
 }

@@ -45,13 +45,4 @@ Rectangle {
         border.color: "#2B2B2B"
         border.width: 4
     }
-
-    Switch {
-        id: _sampleSwitch
-        x: 82
-        y: -27
-        text: qsTr("Sample")
-        onClicked: scriptDefault.sampleSwitchChanged(checked)
-    }
-
 }

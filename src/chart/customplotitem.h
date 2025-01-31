@@ -24,7 +24,7 @@ public:
     void backgroundCustomPlot();
     void setupPlot(QCustomPlot* customPlot);
 
-    void setDataPointers(DataCollection* ptr, DataType type);
+    void setDataPointers(DataCollection** ptr , int ptrCnt);
 protected:
     void routeMouseEvents( QMouseEvent* event );
     void routeWheelEvents(QWheelEvent *event);
@@ -44,6 +44,7 @@ private:
     // DataCollection** m_sensors; // from controllers
     QVector<DataCollection*> m_sensors;
     // QTimer* updateTimer;
+    double lastPointKey;
     bool rescalingON;
     int backlogSize;
 public slots:

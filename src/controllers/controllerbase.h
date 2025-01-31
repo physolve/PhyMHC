@@ -1,7 +1,8 @@
 #pragma once
 
 #include <windows.h>
-#include "../lib/USBIO_CSWrapper.h"
+// #include "../icp/ICPDAS_USBIO.h"
+#include "../icp/USBIO_CSWrapper.h"
 #pragma comment(lib, "ICPDAS_USBIO.lib")
 #include "../datacollection.h"
 #include <QElapsedTimer>
@@ -31,6 +32,7 @@ public:
     int initUSBAI();
     void setData(ControllerData* ptr, DataType type);
     void tempFunctionToSetChannelsType();
+    void setTypeCodeToChannels();
     void startTest() override;
 signals:
     void valueChanged(); //?
@@ -43,6 +45,8 @@ private:
     QElapsedTimer m_programmTime;
 
     ICPDAS_USBIO* USB_AI; // each device
+    // bool USB_AI;
+    // int DevNum;
 
     ControllerData* time;
     ControllerData* tcUp;
@@ -59,16 +63,19 @@ class IcpDOCtrl : public ControllerBase{
 public:
     IcpDOCtrl(QObject *parent = nullptr);
     virtual ~IcpDOCtrl();
-    void addSwitchToList(Switch** ptr);
+    void addSwitchToList(Switch ptr[], int switchesCnt);
     int initUSBDO();
     void startTest() override;
-    // void setSwitchList(const QList<Switch>& switches);
-    // QList<Switch> getSwitchList() const;
-    void testInitialValue();
+    bool updateSwitchState();
+
 private:
     ICPDAS_USBIO* USB_DO; // each device
+    // bool USB_DO;
+    // int DevNum;
+    uint16_t m_total_do;
     // QList<QSharedPointer<Switch>> m_switches;
-    Switch** m_switches;
+    int m_switchesCnt;
+    Switch* m_switches[8];
     // fans // port 1, 0?
     // flow valves // port 2, 0?
     // heaters // port 1, 0?

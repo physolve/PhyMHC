@@ -62,7 +62,6 @@ class ScriptBase : public QObject
     Q_PROPERTY (mnemoValues mnemo READ getMnemo NOTIFY mnemoChanged) //WRITE setExpTimingStruct 
     Q_PROPERTY (targetValues targetvals READ getTargetValues) // NOTIFY mnemoChanged
 
-
 public:
     ScriptBase(QObject *parent = 0);
 	~ScriptBase();
