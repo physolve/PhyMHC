@@ -9,8 +9,13 @@ set(CMAKE_AUTORCC ON)
 
 qt_add_resources(QML_RESOURCES resources.qrc)
 
+
 if(NOT DEFINED ICPHDR)
-    file(GLOB ICPHDR ${CMAKE_CURRENT_SOURCE_DIR}/icp/*.h)
+    if (WIN32)
+        file(GLOB ICPHDR ${CMAKE_CURRENT_SOURCE_DIR}/win_icp/*.h)
+    else()
+        file(GLOB ICPHDR ${CMAKE_CURRENT_SOURCE_DIR}/lin_icp/*.h)
+    endif ()
 endif()
 
 if(NOT DEFINED HEADERS)
@@ -45,8 +50,8 @@ if(NOT DEFINED CHARTSRC)
     file(GLOB CHARTSRC ${CMAKE_CURRENT_SOURCE_DIR}/chart/*.cpp)
 endif()
 
-# file(GLOB CPP_CONTROLLERS src/controllers/*.cpp)
-# file(GLOB HPP_CONTROLLERS src/controllers/*.h)
+
+
 source_group("ICP DAS" FILES ${ICPHDR})
 
 source_group("Header Files" FILES ${HEADERS})
@@ -64,15 +69,14 @@ source_group("Chart Source Files" FILES ${CHARTSRC})
 
 add_definitions(-DQCUSTOMPLOT_USE_OPENGL )
 
-# add_library(U SHARED    icp/ICPDAS_USBIO.h
-#                         # icp/Var.h
-#                         icp/USBIO_CSWrapper.h
-#  )
-
-# link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libicp)
-
+if (LINUX)            
+    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libicp)
+endif (LINUX)
+    
 qt_add_executable(${EXECUTABLE_NAME}
-${ICPHDR}
+# if (WIN32)
+    ${ICPHDR}
+# endif (WIN32)
 ${LIBHDR} ${LIBSRC}
 ${HEADERS} ${SOURCES} 
 ${CONTROLLERHDR} ${CONTROLLERSRC}
@@ -85,7 +89,19 @@ ${QML_RESOURCES}
 #     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 # )
 
-target_link_libraries(${EXECUTABLE_NAME}
+if (WIN32)
+    target_link_libraries(${EXECUTABLE_NAME}
+        PRIVATE Qt6::Core
+                Qt6::Quick
+                Qt6::QuickControls2
+                Qt6::Charts
+                Qt6::PrintSupport
+                Qt6::SerialPort
+                Qt6::OpenGL
+                opengl32
+        )
+else()
+    target_link_libraries(${EXECUTABLE_NAME}
     PRIVATE Qt6::Core
             Qt6::Quick
             Qt6::QuickControls2
@@ -93,7 +109,6 @@ target_link_libraries(${EXECUTABLE_NAME}
             Qt6::PrintSupport
             Qt6::SerialPort
             Qt6::OpenGL
-            opengl32
-            # ICPDAS_USBIO
-            # USBIO_64
-)
+            USBIO_64
+    )
+endif()

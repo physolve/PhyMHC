@@ -1,9 +1,12 @@
 #pragma once
 
-#include <windows.h>
 // #include "../icp/ICPDAS_USBIO.h"
-#include "../icp/USBIO_CSWrapper.h"
-#pragma comment(lib, "ICPDAS_USBIO.lib")
+#if _WIN32
+    #include <windows.h>
+    #include "../icp/USBIO_CSWrapper.h"
+    #pragma comment(lib, "ICPDAS_USBIO.lib") 
+#endif
+
 #include "../datacollection.h"
 #include <QElapsedTimer>
 #include <QTimer>
@@ -43,10 +46,12 @@ protected slots:
 private:
     QTimer* m_timer;
     QElapsedTimer m_programmTime;
-
+#if _WIN32
     ICPDAS_USBIO* USB_AI; // each device
-    // bool USB_AI;
-    // int DevNum;
+#elif __linux__
+    bool USB_AI;
+    int DevNum;
+#endif
 
     ControllerData* time;
     ControllerData* tcUp;
@@ -69,9 +74,12 @@ public:
     bool updateSwitchState();
 
 private:
+#if _WIN32
     ICPDAS_USBIO* USB_DO; // each device
-    // bool USB_DO;
-    // int DevNum;
+#elif __linux__
+    bool USB_DO;
+    int DevNum;
+#endif
     uint16_t m_total_do;
     // QList<QSharedPointer<Switch>> m_switches;
     int m_switchesCnt;

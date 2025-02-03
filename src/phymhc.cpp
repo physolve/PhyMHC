@@ -54,12 +54,13 @@ void PhyMHC::initDigitalData(){
 
     vUp.m_name = "Valve Upstream"; // port 0, ch0
     vDw.m_name = "Valve Downstream"; // port 0, ch1
-    vSu.m_name = "Valve Supply"; // port 0, ch2
+    vVa.m_name = "Valve Vacuum"; // port 0, ch2
     coolUp.m_name = "Cooler Upstream"; // port 0, ch3
     coolDw.m_name = "Cooler Downstream"; // port 0, ch4
     hUp.m_name = "Heater Upstream"; // port 0, ch5
     hDw.m_name = "Heater Downstream"; // port 0, ch6 
-    
+    vSu.m_name = "skip"; // port 0, ch7
+
     // vflUp.m_name = "Valve Flow Upstream"; // port 1, ch0
     // vflDw.m_name = "Valve Flow Downstream"; // port 2, ch1
 
