@@ -67,7 +67,7 @@ private:
 class ExpData : public DataCollection
 {
 public:
-    ExpData(const QString &name, const int &setId);
+    ExpData(const QString &name);
     void setData(const QVector<double> &val_y);
 private:
     unsigned int m_setId;

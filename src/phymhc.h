@@ -7,6 +7,8 @@
 #include "chart/customplotitem.h"
 #include "controllers/testcontroller.h"
 #include "controllers/controllerbase.h"
+#include "scalarcalc.h"
+#include "logdatabase.h"
 
 class PhyMHC : public QApplication
 {
@@ -39,6 +41,8 @@ private:
     void initTestController();
     void icpAiController();
     void icpDoController();
+    void initScalarCalc();
+    void initLogData();
 
     bool getDigitalConnected() const;
     bool getAnalogConnected() const;
@@ -121,4 +125,12 @@ private:
 
     guiValues m_guiVals;
     guiValues getGuiVals() const;
+
+    ExpData reactorUps; // throw out somewhere else, later
+    ExpData reactorDws; // throw out somewhere else, later
+
+    ScalarCalc flowToVolumeUpstream;
+    ScalarCalc flowToVolumeDownstream;
+
+    LogDataBase logData;
 };

@@ -5,7 +5,7 @@
     <qresource prefix="/PhyMHC">
 
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/MnemoBase.qml</file>
-        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/background/mnemoscheme_beta.png</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/background/mnemoscheme_gamma.png</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/pics/cooler.svg</file>
 
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/ValveButton.qml</file>

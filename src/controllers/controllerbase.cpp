@@ -157,7 +157,8 @@ void IcpAICtrl::setTypeCodeToChannels(){
 
 void IcpAICtrl::startTest(){
     m_programmTime.start();
-    m_timer->start(1000);
+    // sampling time
+    m_timer->start(500);
 }
 
 void IcpAICtrl::processEvents(){

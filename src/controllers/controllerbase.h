@@ -10,7 +10,7 @@
 #include "../datacollection.h"
 #include <QElapsedTimer>
 #include <QTimer>
-#include <QSharedPointer>
+// #include <QSharedPointer>
 
 class ControllerBase : public QObject
 {

@@ -51,7 +51,7 @@ void ControllerData::addValue(const double &val_y){
     addPoint(val);
 }
 
-ExpData::ExpData(const QString &name, const int &setId) : DataCollection(name), m_setId(setId)
+ExpData::ExpData(const QString &name) : DataCollection(name)
 {
 
 }
