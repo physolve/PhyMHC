@@ -31,16 +31,29 @@ double DataCollection::getCurValue() const{
     return m_y.last();
 }
 
-ControllerData::ControllerData(const QString &name) : DataCollection(name)
+ControllerData::ControllerData(const QString &name, const double& A, const double& B) : DataCollection(name),
+lin_A(A), lin_B(B)
 {
+
 }
 
 ControllerData::~ControllerData(){
     qDebug() << "ControllerData destructor";
 }
 
+void ControllerData::setCoeffs(const double& A, const double& B){
+    lin_A = A;
+    lin_B = B;
+}
+
+void ControllerData::addValue(const double &val_y){
+    const auto& val = lin_A*val_y + lin_B;
+    addPoint(val);
+}
+
 ExpData::ExpData(const QString &name, const int &setId) : DataCollection(name), m_setId(setId)
 {
+
 }
 
 void ExpData::setData(const QVector<double> &val_y){

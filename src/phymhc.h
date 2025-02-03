@@ -14,13 +14,13 @@ class PhyMHC : public QApplication
     Q_PROPERTY (bool analogConnected READ getAnalogConnected NOTIFY analogConnectedChanged)
     Q_PROPERTY (bool digitalConnected READ getDigitalConnected NOTIFY digitalConnectedChanged)
 
-    Q_PROPERTY (mnemoValues guiVals READ getGuiVals NOTIFY guiValsChanged) //WRITE setExpTimingStruct 
+    Q_PROPERTY (guiValues guiVals READ getGuiVals NOTIFY guiValsChanged) //WRITE setExpTimingStruct 
 
     // each bool property to each class (valves, heater, cooler, flow)
     Q_PROPERTY (bool vUpState READ getVUp WRITE setVUp NOTIFY vUpChanged)
     Q_PROPERTY (bool vDwState READ getVDw WRITE setVDw NOTIFY vDwChanged)
-    Q_PROPERTY (bool vSuState READ getVSu WRITE setVSu NOTIFY vSuChanged)
     Q_PROPERTY (bool vVaState READ getVVa WRITE setVVa NOTIFY vVaChanged)
+    Q_PROPERTY (bool vSuState READ getVSu WRITE setVSu NOTIFY vSuChanged)
 
     Q_PROPERTY (bool coolUpState READ getCoolUp WRITE setCoolUp NOTIFY coolUpChanged)
     Q_PROPERTY (bool coolDwState READ getCoolDw WRITE setCoolDw NOTIFY coolDwChanged)
@@ -43,25 +43,25 @@ private:
     bool getDigitalConnected() const;
     bool getAnalogConnected() const;
 
-    void doValveChange();
+    bool doSwitchChange();
 
     void setVUp(bool state);
     void setVDw(bool state);
-    void setVSu(bool state);
+    void setVVa(bool state);
     void setCoolUp(bool state);
     void setCoolDw(bool state);
     void setHUp(bool state);
     void setHDw(bool state);
-    void setVVa(bool state);
+    void setVSu(bool state);
 
     bool getVUp() const;
     bool getVDw() const;
-    bool getVSu() const;
+    bool getVVa() const;
     bool getCoolUp() const;
     bool getCoolDw() const;
     bool getHUp() const;
     bool getHDw() const;
-    bool getVVa() const;
+    bool getVSu() const;
 
 signals:
     void analogConnectedChanged();
@@ -71,12 +71,12 @@ signals:
 
     void vUpChanged();
     void vDwChanged();
-    void vSuChanged();
+    void vVaChanged();
     void coolUpChanged();
     void coolDwChanged();
     void hUpChanged();
     void hDwChanged();
-    void vVaChanged();
+    void vSuChanged();
 
 private slots:
     void guiValsUpdate();
@@ -107,18 +107,18 @@ private:
 
     Switch vUp; // port 0, ch0
     Switch vDw; // port 0, ch1
-    Switch vSu; // port 0, ch2
+    Switch vVa; // port 0, ch2
     Switch coolUp; // port 0, ch3
     Switch coolDw; // port 0, ch4
     Switch hUp; // port 0, ch5
     Switch hDw; // port 0, ch6 
-    Switch vVa; // port 0, ch7
+    Switch vSu; // port 0, ch7
     // unused
-    Switch vflUp; // port 1, ch0
-    Switch vflDw; // port 2, ch1
+    // Switch vflUp; // port 1, ch0
+    // Switch vflDw; // port 2, ch1
 
     CustomPlotItem* m_testAxisTag;
 
-    mnemoValues m_guiVals;
-    mnemoValues getGuiVals() const;
+    guiValues m_guiVals;
+    guiValues getGuiVals() const;
 };

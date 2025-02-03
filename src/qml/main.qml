@@ -149,11 +149,10 @@ ApplicationWindow {
                         }
                         ControllerStatus{
                             name: "USB-2045"
-                            parameters: [ "Valve upstream", "Valve downstream", "Valve supply",
+                            parameters: [ "Valve upstream", "Valve downstream", "Valve vacuum",
                             "Cooler upstream", "Cooler downstream", "Heater upstream", "Heater downstream", 
-                            "skip",
-                            "Flow upstream", "Flow downstream"]
-                             color: backend.digitalConnected ? "#536872" : "#000000"
+                            "skip"]
+                            color: backend.digitalConnected ? "#536872" : "#000000"
                         }
                     }
                 }

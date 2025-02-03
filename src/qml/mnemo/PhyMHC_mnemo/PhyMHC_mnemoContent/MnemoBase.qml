@@ -26,7 +26,7 @@ Item {
         id: valveDowns
         x: 719
         y: 315
-        checked: backend.vDwState // scriptDefault.mnemo.valveDownstream
+        checked: backend.vDwState
         onClicked: backend.vDwState = checked
     }
     ValveButton {
@@ -34,8 +34,7 @@ Item {
         id: valveUps
         x: 325
         y: 507
-        checked: backend.vUpState // scriptDefault.mnemo.valveUpstream
-        // onClicked: scriptDefault.valveUpstreamChanged(checked)
+        checked: backend.vUpState
         onClicked: backend.vUpState = checked
     }
     Connections{
@@ -53,8 +52,10 @@ Item {
         y: 144
     }
     Switch{
-        x: 203
-        y: 120
+        id: heaterSwitchUp
+        x: 210
+        y: 109
+        height: 35
         z: 0
         text: qsTr("Heater")
         checked: backend.hUpState
@@ -80,8 +81,9 @@ Item {
         cooling: backend.coolUpState
     }
     Switch{
-        x: 470
-        y: 210
+        id: fanSwitchUp
+        x: 360
+        y: 109
         z: 0
         text: qsTr("Fans")
         checked: backend.coolUpState
@@ -92,6 +94,16 @@ Item {
         z: 1
         x: 582
         y: 667
+    }
+    Switch {
+        id: heaterSwitchDw
+        x: 615
+        y: 634
+        height: 35
+        text: qsTr("Heater")
+        z: 0
+        checked: backend.hDwState
+        onClicked: backend.hDwState = checked
     }
 
     Cooler {
@@ -105,11 +117,19 @@ Item {
         y: 722
         z: 0
     }
-
     Cooler {
         x: 764
         y: 722
         z: 0
+    }
+    Switch {
+        id: fanSwitchDw
+        x: 741
+        y: 634
+        text: qsTr("Fans")
+        z: 0
+        checked: backend.coolDwState
+        onClicked: backend.coolDwState = checked
     }
 
     SensorWidget {
@@ -117,40 +137,40 @@ Item {
         id: pressureUps
         x: 658
         y: 144
-        value: scriptDefault.mnemo.pressureUpstream
+        value: backend.guiVals.pressureUpstream
     }
     SensorWidget {
         z: 1
         id: pressureDowns
         x: 325
         y: 667
-        value: scriptDefault.mnemo.pressureDownstream
+        value: backend.guiVals.pressureDownstream
     }
     TempWidget {
         id: temperatureUps
         x: 514
         y: 160
-        value: scriptDefault.mnemo.temperatureUpstream
+        value: backend.guiVals.temperatureUpstream
     }
     TempWidget {
         id: temperatureDowns
         x: 414
         y: 683
-        value: scriptDefault.mnemo.temperatureDownstream
+        value: backend.guiVals.temperatureDownstream
     }
 
     FlowMeterWidget {
         id: flowMeterUps
-        x: 332
-        y: 302
-        value: scriptDefault.mnemo.flowUpstream
+        x: 530
+        y: 494
+        value: backend.guiVals.flowUpstream
     }
 
     FlowMeterWidget {
         id: flowMeterDowns
-        x: 530
-        y: 494
-        value: scriptDefault.mnemo.flowDownstream
+        x: 332
+        y: 302
+        value: backend.guiVals.flowDownstream
     }
 
     ValveButton {
@@ -158,7 +178,8 @@ Item {
         x: 908
         y: 484
         z: 1
-        checked: scriptDefault.mnemo.valveVacuum
+        checked: backend.vVaState
+        onClicked: backend.vVaState = checked
     }
 
 }
