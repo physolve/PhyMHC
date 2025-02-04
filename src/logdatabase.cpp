@@ -13,7 +13,7 @@ LogDataBase::LogDataBase(QObject* parent) : QObject(parent), m_logTimer(new QTim
         return;
     QString line;
     // {Reactor 1 info} // {Reactor 2 info}
-    QString header = "Time\tElapsed\tFlowUps\tPressureUps\tTemperatureUps\tFlowDws\tPressureDws\tTemperatureDws\tAccumReactorUps\tAccumReactorDws";
+    QString header = "Time\tElapsed\tFlowUps\tPressureUps\tTemperatureUps\tFlowDws\tPressureDws\tTemperatureDws\tReactorChargeUps\tReactorChargeDws";
     QTextStream in(&file);
     line = in.readLine();
     if (line != header) {
@@ -23,7 +23,7 @@ LogDataBase::LogDataBase(QObject* parent) : QObject(parent), m_logTimer(new QTim
     file.close();
     // default frequency 10 sec?
     m_dataWriteFrequency = 10;
-    m_logTimer->setInterval(m_dataWriteFrequency);
+    m_logTimer->setInterval(m_dataWriteFrequency*1000);
     connect(m_logTimer, &QTimer::timeout, this, &LogDataBase::programmLog);
 
     m_programmTime.start();
@@ -32,6 +32,16 @@ LogDataBase::LogDataBase(QObject* parent) : QObject(parent), m_logTimer(new QTim
 LogDataBase::~LogDataBase(){
     if(m_logTimer->isActive()) m_logTimer->stop();
     // file close if so
+    // clear pointers
+    time = nullptr;
+    tcUp = nullptr;
+    prUp = nullptr;
+    flUp = nullptr;
+    tcDw = nullptr;
+    prDw = nullptr;
+    flDw = nullptr;
+    reactorUps = nullptr;
+    reactorDws = nullptr;
 }
 
 void LogDataBase::setData(DataCollection* ptr, LogType type){
@@ -51,7 +61,7 @@ void LogDataBase::setData(DataCollection* ptr, LogType type){
 
 void LogDataBase::setWriteFrequency(int freq){
     m_dataWriteFrequency = freq;
-    m_logTimer->setInterval(m_dataWriteFrequency);
+    m_logTimer->setInterval(m_dataWriteFrequency*1000);
 }
 
 void LogDataBase::startLog(){

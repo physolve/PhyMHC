@@ -32,7 +32,7 @@ Item {
     ValveButton {
         z: 1
         id: valveUps
-        x: 438
+        x: 424
         y: 507
         checked: backend.vUpState
         onClicked: backend.vUpState = checked
