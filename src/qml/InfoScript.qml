@@ -84,13 +84,13 @@ Item {
             id: upstreamAR
             spacing: 10
             Switch{
-                text: "Upstream Append"
+                text: "Upstream Load"
                 // checkable:true
                 checked: scalarUpstream.append
                 onClicked: scalarUpstream.append = checked
             }
             Switch{
-                text: "Upstream Remove"
+                text: "Upstream Release"
                 // checkable:true
                 checked: scalarUpstream.remove
                 onClicked: scalarUpstream.remove = checked
@@ -159,13 +159,13 @@ Item {
             id: downstreamAR
             spacing: 10
             Switch{
-                text: "Downstream Append"
+                text: "Downstream Load"
                 // checkable:true
                 checked: scalarDownstream.append
                 onClicked: scalarDownstream.append = checked
             }
             Switch{
-                text: "Downstream Remove"
+                text: "Downstream Release"
                 // checkable:true
                 checked: scalarDownstream.remove
                 onClicked: scalarDownstream.remove = checked

@@ -187,11 +187,11 @@ void IcpAICtrl::processEvents(){
     time->addPoint(m_programmTime.elapsed()/1000.);
     // those points should be recalculated inside each
     tcUp->addPoint(o_fAIValue[0]);
-    prUp->addValue(o_fAIValue[1]);
-    flUp->addValue(o_fAIValue[2]);
+    prUp->addValue(o_fAIValue[1], 0.0);
+    flUp->addValue(o_fAIValue[2], 0.1);
     tcDw->addValue(o_fAIValue[3]);
-    prDw->addValue(o_fAIValue[4]);
-    flDw->addValue(o_fAIValue[5]);
+    prDw->addValue(o_fAIValue[4], 0.0);
+    flDw->addValue(o_fAIValue[5], 0.1);
     
     emit valueChanged(); 
 }

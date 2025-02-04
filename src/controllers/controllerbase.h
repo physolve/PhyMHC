@@ -3,7 +3,7 @@
 // #include "../icp/ICPDAS_USBIO.h"
 #if _WIN32
     #include <windows.h>
-    #include "../icp/USBIO_CSWrapper.h"
+    #include "../win_icp/USBIO_CSWrapper.h"
     #pragma comment(lib, "ICPDAS_USBIO.lib") 
 #endif
 

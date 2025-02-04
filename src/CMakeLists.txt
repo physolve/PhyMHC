@@ -50,8 +50,6 @@ if(NOT DEFINED CHARTSRC)
     file(GLOB CHARTSRC ${CMAKE_CURRENT_SOURCE_DIR}/chart/*.cpp)
 endif()
 
-
-
 source_group("ICP DAS" FILES ${ICPHDR})
 
 source_group("Header Files" FILES ${HEADERS})
