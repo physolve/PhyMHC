@@ -59,6 +59,7 @@ public:
     virtual ~ControllerData();
     void setCoeffs(const double& A, const double& B);
     void addValue(const double &val_y);
+    void addValue(const double &val_y, const double &minimalValue);
 private:
     double lin_A;
     double lin_B;
@@ -67,7 +68,7 @@ private:
 class ExpData : public DataCollection
 {
 public:
-    ExpData(const QString &name, const int &setId);
+    ExpData(const QString &name);
     void setData(const QVector<double> &val_y);
 private:
     unsigned int m_setId;

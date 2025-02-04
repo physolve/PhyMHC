@@ -26,7 +26,6 @@ void FlowModel::startFlow(double currentFlow, double targetFlow){
     m_timer.start(33);
 }
 
-
 void FlowModel::startCustomFlow(bool on){
     if(on){
         m_timer.start(33);

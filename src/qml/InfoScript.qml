@@ -13,7 +13,7 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        height: 600
+        height: 250
         // approach as listview later
         TextArea {
             text: scriptDefault.infoString
@@ -23,7 +23,157 @@ Item {
         }
     }
     Column{
+        id: reactorUpstreamState
         anchors.top: view.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 200
+        anchors.topMargin: 20
+        anchors.leftMargin: 40
+        spacing: 10
+        Row{
+            spacing: 10
+            Label {
+                // id: label
+                anchors.verticalCenter: parent.verticalCenter 
+                text: "Upstream reactor"
+                font.pixelSize: 17
+                color: "white"
+            }
+            Switch{
+                text: "Exposure"
+                // height: 35
+                checked: scalarUpstream.exposure
+                onClicked: scalarUpstream.exposure = checked
+            }
+        }
+        Row{
+            spacing: 10
+            Label {
+                // id: label
+                anchors.verticalCenter: parent.verticalCenter 
+                text: "Start charge"
+                font.pixelSize: 17
+                color: "white"
+            }
+            TextField{
+                id: startLitersUpstream
+                font.pointSize: 11
+                placeholderText: "литры"
+            }
+            Button{
+                text: "Apply"
+                onClicked: scalarUpstream.setVolumeValue(startLitersUpstream.text)
+            }
+        }
+        Row{
+            spacing: 10
+            Label {
+                // id: label
+                anchors.verticalCenter: parent.verticalCenter 
+                text: "Current charge"
+                font.pixelSize: 17
+                color: "white"
+            }
+            Label{
+                font.pointSize: 11
+                text: scalarUpstream.currentScalar.toFixed(3)
+            }
+        }
+        Row{
+            id: upstreamAR
+            spacing: 10
+            Switch{
+                text: "Upstream Load"
+                // checkable:true
+                checked: scalarUpstream.append
+                onClicked: scalarUpstream.append = checked
+            }
+            Switch{
+                text: "Upstream Release"
+                // checkable:true
+                checked: scalarUpstream.remove
+                onClicked: scalarUpstream.remove = checked
+            }
+        }
+    }
+    Column{
+        id: reactorDownstreamState
+        anchors.top: reactorUpstreamState.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: 200
+        anchors.topMargin: 20
+        anchors.leftMargin: 40
+        spacing: 10
+        Row{
+            spacing: 10
+            Label {
+                // id: label
+                anchors.verticalCenter: parent.verticalCenter 
+                text: "Downstream reactor"
+                font.pixelSize: 17
+                color: "white"
+            }
+            Switch{
+                text: "Exposure"
+                // height: 35
+                checked: scalarDownstream.exposure
+                onClicked: scalarDownstream.exposure = checked
+            }
+        }
+        Row{
+            spacing: 10
+            Label {
+                // id: label
+                anchors.verticalCenter: parent.verticalCenter 
+                text: "Start charge"
+                font.pixelSize: 17
+                color: "white"
+            }
+            TextField{
+                id: startLitersDownstream
+                font.pointSize: 11
+                placeholderText: "литры"
+            }
+            Button{
+                text: "Apply"
+                onClicked: scalarDownstream.setVolumeValue(startLitersDownstream.text)
+            }
+        }
+        Row{
+            spacing: 10
+            Label {
+                // id: label
+                anchors.verticalCenter: parent.verticalCenter 
+                text: "Current charge"
+                font.pixelSize: 17
+                color: "white"
+            }
+            Label{
+                font.pointSize: 11
+                text: scalarDownstream.currentScalar.toFixed(3)
+            }
+        }
+        Row{
+            id: downstreamAR
+            spacing: 10
+            Switch{
+                text: "Downstream Load"
+                // checkable:true
+                checked: scalarDownstream.append
+                onClicked: scalarDownstream.append = checked
+            }
+            Switch{
+                text: "Downstream Release"
+                // checkable:true
+                checked: scalarDownstream.remove
+                onClicked: scalarDownstream.remove = checked
+            }
+        }
+    }
+    Column{
+        anchors.top: reactorDownstreamState.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom

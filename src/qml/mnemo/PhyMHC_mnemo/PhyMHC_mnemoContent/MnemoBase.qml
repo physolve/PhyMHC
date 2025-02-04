@@ -8,7 +8,7 @@ Item {
     Image {
         z: 0
         id: hMCmnemo
-        source: "background/mnemoscheme_beta.png"
+        source: "background/mnemoscheme_gamma.png"
         // fillMode: Image.PreserveAspectFit
         width: 1070
         height: 900
@@ -18,13 +18,13 @@ Item {
     GasTank {
         z:1
         id: gasTank
-        x: 36
-        y: 275
+        x: 921
+        y: 280
     }
     ValveButton {
         z: 1
         id: valveDowns
-        x: 719
+        x: 621
         y: 315
         checked: backend.vDwState
         onClicked: backend.vDwState = checked
@@ -32,7 +32,7 @@ Item {
     ValveButton {
         z: 1
         id: valveUps
-        x: 325
+        x: 438
         y: 507
         checked: backend.vUpState
         onClicked: backend.vUpState = checked
@@ -48,13 +48,13 @@ Item {
     Reactor{
         id: reactorUpstream
         z: 1
-        x: 203
-        y: 144
+        x: 578
+        y: 147
     }
     Switch{
         id: heaterSwitchUp
-        x: 210
-        y: 109
+        x: 585
+        y: 112
         height: 35
         z: 0
         text: qsTr("Heater")
@@ -64,26 +64,26 @@ Item {
 
     Cooler{
         z: 0
-        x: 218
-        y: 199
+        x: 593
+        y: 202
         cooling: backend.coolUpState
     }
     Cooler {
-        x: 303
-        y: 199
+        x: 678
+        y: 202
         z: 0
         cooling: backend.coolUpState
     }
     Cooler {
-        x: 388
-        y: 199
+        x: 763
+        y: 202
         z: 0
         cooling: backend.coolUpState
     }
     Switch{
         id: fanSwitchUp
-        x: 360
-        y: 109
+        x: 735
+        y: 112
         z: 0
         text: qsTr("Fans")
         checked: backend.coolUpState
@@ -92,13 +92,13 @@ Item {
 
     Reactor {
         z: 1
-        x: 582
-        y: 667
+        x: 221
+        y: 635
     }
     Switch {
         id: heaterSwitchDw
-        x: 615
-        y: 634
+        x: 253
+        y: 605
         height: 35
         text: qsTr("Heater")
         z: 0
@@ -107,25 +107,25 @@ Item {
     }
 
     Cooler {
-        x: 594
-        y: 722
+        x: 233
+        y: 690
         z: 0
     }
 
     Cooler {
-        x: 679
-        y: 722
+        x: 318
+        y: 690
         z: 0
     }
     Cooler {
-        x: 764
-        y: 722
+        x: 403
+        y: 690
         z: 0
     }
     Switch {
         id: fanSwitchDw
-        x: 741
-        y: 634
+        x: 379
+        y: 605
         text: qsTr("Fans")
         z: 0
         checked: backend.coolDwState
@@ -135,27 +135,27 @@ Item {
     SensorWidget {
         z: 1
         id: pressureUps
-        x: 658
+        x: 253
         y: 144
         value: backend.guiVals.pressureUpstream
     }
     SensorWidget {
         z: 1
         id: pressureDowns
-        x: 325
-        y: 667
+        x: 724
+        y: 635
         value: backend.guiVals.pressureDownstream
     }
     TempWidget {
         id: temperatureUps
-        x: 514
+        x: 407
         y: 160
         value: backend.guiVals.temperatureUpstream
     }
     TempWidget {
         id: temperatureDowns
-        x: 414
-        y: 683
+        x: 521
+        y: 651
         value: backend.guiVals.temperatureDownstream
     }
 
@@ -175,8 +175,8 @@ Item {
 
     ValveButton {
         id: valveVacuum
-        x: 908
-        y: 484
+        x: 115
+        y: 422
         z: 1
         checked: backend.vVaState
         onClicked: backend.vVaState = checked

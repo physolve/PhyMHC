@@ -51,7 +51,14 @@ void ControllerData::addValue(const double &val_y){
     addPoint(val);
 }
 
-ExpData::ExpData(const QString &name, const int &setId) : DataCollection(name), m_setId(setId)
+void ControllerData::addValue(const double &val_y, const double &minimalValue){
+    auto val = lin_A*val_y + lin_B;
+    if(val < minimalValue)
+        val = 0.0;
+    addPoint(val);
+}
+
+ExpData::ExpData(const QString &name) : DataCollection(name)
 {
 
 }

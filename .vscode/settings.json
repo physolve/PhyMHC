@@ -2,6 +2,7 @@
     "cmake.options.statusBarVisibility": "visible",
     "files.associations": {
         "qdebug": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "qelapsedtimer": "cpp"
     }
 }

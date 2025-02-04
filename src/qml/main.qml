@@ -151,7 +151,7 @@ ApplicationWindow {
                             name: "USB-2045"
                             parameters: [ "Valve upstream", "Valve downstream", "Valve vacuum",
                             "Cooler upstream", "Cooler downstream", "Heater upstream", "Heater downstream", 
-                            "Valve supply"]
+                            "skip"]
                             color: backend.digitalConnected ? "#536872" : "#000000"
                         }
                     }

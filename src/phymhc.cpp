@@ -9,12 +9,15 @@ PhyMHC::PhyMHC(int &argc, char **argv):
     QApplication(argc, argv), m_scriptDefault(), m_testAxisTag(nullptr),
     // time("time"), upstream("upstream"), downstream("downstream"),
     timeAnalog("time"), tcUp("Thermocoulpe upstream"), prUp("Pressure upstream"),
-    flUp("Flow upstream"), tcDw("Thermocoulpe downstream"), prDw("Pressure downstream"), flDw("Flow downstream")
+    flUp("Flow upstream"), tcDw("Thermocoulpe downstream"), prDw("Pressure downstream"), flDw("Flow downstream"),
+    reactorUps("Reactor upstream"), reactorDws("Reactor downstream")
 {
     initDigitalData();
     initTestController();
     icpAiController();
     icpDoController();
+    initScalarCalc();
+    initLogData();
     initGUI();
 }
 
@@ -41,6 +44,8 @@ void PhyMHC::initGUI(){
     qmlRegisterType<CustomPlotItem>("CustomPlot", 1, 0, "CustomPlotItem");
     m_engine.rootContext()->setContextProperty("scriptDefault", &m_scriptDefault);
     m_engine.rootContext()->setContextProperty("backend", this);
+    m_engine.rootContext()->setContextProperty("scalarUpstream", &flowToVolumeUpstream);
+    m_engine.rootContext()->setContextProperty("scalarDownstream", &flowToVolumeDownstream);
     m_engine.load(url);
 }
 
@@ -54,12 +59,13 @@ void PhyMHC::initDigitalData(){
 
     vUp.m_name = "Valve Upstream"; // port 0, ch0
     vDw.m_name = "Valve Downstream"; // port 0, ch1
-    vSu.m_name = "Valve Supply"; // port 0, ch2
+    vVa.m_name = "Valve Vacuum"; // port 0, ch2
     coolUp.m_name = "Cooler Upstream"; // port 0, ch3
     coolDw.m_name = "Cooler Downstream"; // port 0, ch4
     hUp.m_name = "Heater Upstream"; // port 0, ch5
     hDw.m_name = "Heater Downstream"; // port 0, ch6 
-    
+    vSu.m_name = "skip"; // port 0, ch7
+
     // vflUp.m_name = "Valve Flow Upstream"; // port 1, ch0
     // vflDw.m_name = "Valve Flow Downstream"; // port 2, ch1
 
@@ -116,6 +122,25 @@ void PhyMHC::icpDoController(){
     }
 }
 
+void PhyMHC::initScalarCalc(){
+    flowToVolumeUpstream.setCalcData(&timeAnalog, &flUp, &flDw, &reactorUps);
+    flowToVolumeDownstream.setCalcData(&timeAnalog, &flDw, &flUp, &reactorDws);
+    // connect(&flowToVolumeUpstream, &ScalarCalc::valueChanged, this, &PhyMHC::guiValsUpdate); later
+}
+
+void PhyMHC::initLogData(){
+    logData.setData(&timeAnalog, LogType::LOG_time);
+    logData.setData(&tcUp, LogType::LOG_tcUp);
+    logData.setData(&prUp, LogType::LOG_prUp);
+    logData.setData(&flUp, LogType::LOG_flUp);
+    logData.setData(&tcDw, LogType::LOG_tcDw);
+    logData.setData(&prDw, LogType::LOG_prDw);
+    logData.setData(&flDw, LogType::LOG_flDw);
+    logData.setData(&reactorUps, LogType::LOG_reactorUps);
+    logData.setData(&reactorDws, LogType::LOG_reactorDws);
+    logData.startLog();
+}
+
 bool PhyMHC::getDigitalConnected() const{
     return digitalController.isConnected();
 }
@@ -149,6 +174,12 @@ void PhyMHC::guiValsUpdate(){
     m_guiVals.m_pressureUpstream = prUp.getCurValue();
     m_guiVals.m_pressureDownstream = prDw.getCurValue();
     emit guiValsChanged();
+
+    // also for now update flow here, later make another connection
+    if(flowToVolumeUpstream.getExposure())
+        flowToVolumeUpstream.processCalc();
+    if(flowToVolumeDownstream.getExposure())
+        flowToVolumeDownstream.processCalc();
 }
 
 guiValues PhyMHC::getGuiVals() const{
