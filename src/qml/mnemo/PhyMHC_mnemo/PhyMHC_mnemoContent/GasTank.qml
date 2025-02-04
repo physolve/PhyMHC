@@ -25,17 +25,6 @@ Item {
         border.color: "black"
         border.width: 3
     }
-    RoundButton{
-        id: supplyOpen
-        y: 50
-        width:50
-        height:50
-        anchors.horizontalCenter: parent.horizontalCenter
-        checkable: true
-        text: checked ? "c" : "o"
-        Material.background: checked ? Material.Red : Material.Blue
-        onClicked: scriptDefault.startCustomFlow(checked)
-    }
     Rectangle {
         id: sliderPlacer1
         z:1
@@ -71,7 +60,7 @@ Item {
             startAngle: 40
             //Layout.fillWidth: false
             trackWidth: 10
-            value: supplyOpen.checked ? 10 : 1
+            value: 1.000
             maxValue: 10
             endAngle: 320
 
