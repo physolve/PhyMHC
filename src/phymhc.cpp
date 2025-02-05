@@ -17,6 +17,7 @@ PhyMHC::PhyMHC(int &argc, char **argv):
     icpAiController();
     icpDoController();
     initScalarCalc();
+    initRunConfig();
     initLogData();
     initGUI();
 }
@@ -46,6 +47,7 @@ void PhyMHC::initGUI(){
     m_engine.rootContext()->setContextProperty("backend", this);
     m_engine.rootContext()->setContextProperty("scalarUpstream", &flowToVolumeUpstream);
     m_engine.rootContext()->setContextProperty("scalarDownstream", &flowToVolumeDownstream);
+    m_engine.rootContext()->setContextProperty("runConfig", &runConfig);
     m_engine.load(url);
 }
 
@@ -128,8 +130,23 @@ void PhyMHC::initScalarCalc(){
     // connect(&flowToVolumeUpstream, &ScalarCalc::valueChanged, this, &PhyMHC::guiValsUpdate); later
 }
 
+void PhyMHC::initRunConfig(){
+    runConfig.setData(&tcUp, LogType::LOG_tcUp);
+    runConfig.setData(&prUp, LogType::LOG_prUp);
+    runConfig.setData(&flUp, LogType::LOG_flUp);
+    runConfig.setData(&tcDw, LogType::LOG_tcDw);
+    runConfig.setData(&prDw, LogType::LOG_prDw);
+    runConfig.setData(&flDw, LogType::LOG_flDw);
+    runConfig.setData(&reactorUps, LogType::LOG_reactorUps);
+    runConfig.setData(&reactorDws, LogType::LOG_reactorDws);
+    m_runParams = runConfig.getRunParameters();
+    m_runParams.initialLitresFrom = flowToVolumeUpstream.getCurrentScalar();
+    m_runParams.initialLitresTo = flowToVolumeDownstream.getCurrentScalar();
+    m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
+    runConfig.updateRunParameters(m_runParams);
+}
+
 void PhyMHC::initLogData(){
-    logData.setData(&timeAnalog, LogType::LOG_time);
     logData.setData(&tcUp, LogType::LOG_tcUp);
     logData.setData(&prUp, LogType::LOG_prUp);
     logData.setData(&flUp, LogType::LOG_flUp);
@@ -166,6 +183,24 @@ bool PhyMHC::doSwitchChange(){
     return digitalController.updateSwitchState();
 }
 
+bool PhyMHC::passRunParametersGui(const QVariantList &params){
+    if(params.isEmpty() || params.count() != 10){
+        qDebug() << "Passed wrong paramters";
+        return false;
+    }
+    m_runParams.runName = params.at(0).toString();
+    m_runParams.releaseFrom = params.at(1).toString();
+    m_runParams.initialLitresFrom = params.at(2).toDouble();
+    m_runParams.loadTo = params.at(3).toString();
+    m_runParams.initialLitresTo = params.at(4).toDouble();
+    m_runParams.upstreamToDownstream = params.at(5).toBool();
+    m_runParams.downstreamToUpstream = params.at(6).toBool();
+    m_runParams.upstreamToAir = params.at(7).toBool();
+    m_runParams.downstreamToAir = params.at(8).toBool();
+    m_runParams.logHeaderComment = params.at(9).toString();
+    return true;
+}
+
 void PhyMHC::guiValsUpdate(){
     m_guiVals.m_flowUpstream = flUp.getCurValue();
     m_guiVals.m_flowDownstream = flDw.getCurValue();
@@ -176,14 +211,135 @@ void PhyMHC::guiValsUpdate(){
     emit guiValsChanged();
 
     // also for now update flow here, later make another connection
-    if(flowToVolumeUpstream.getExposure())
+    if(flowToVolumeUpstream.getExposure()){
         flowToVolumeUpstream.processCalc();
-    if(flowToVolumeDownstream.getExposure())
+    }
+    if(flowToVolumeDownstream.getExposure()){
         flowToVolumeDownstream.processCalc();
+    }
+
+    //updateRunParams
+    // if runConfig to runConfig
+    if(m_runParams.downstreamToUpstream){
+        m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
+        m_runParams.endLitresFrom = flowToVolumeDownstream.getCurrentScalar();
+        m_runParams.differenseToFrom = (m_runParams.initialLitresFrom-m_runParams.endLitresFrom)-(m_runParams.endLitresTo-m_runParams.initialLitresTo);
+        m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
+        m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
+    }
+    else if(m_runParams.upstreamToDownstream){
+        m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
+        m_runParams.endLitresFrom = flowToVolumeUpstream.getCurrentScalar();
+        m_runParams.differenseToFrom = (m_runParams.initialLitresFrom-m_runParams.endLitresFrom)-(m_runParams.endLitresTo-m_runParams.initialLitresTo);
+        m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
+        m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
+    }
+    else if(m_runParams.upstreamToAir){
+        m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
+        m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
+        m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
+    }
+    else if(m_runParams.downstreamToAir){
+        m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
+        m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
+        m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
+    }
+    if(runConfig.isRunLog()){
+        runConfig.updateRunParameters(m_runParams);
+    }
 }
 
 guiValues PhyMHC::getGuiVals() const{
     return m_guiVals;
+}
+
+void PhyMHC::runFromGui(){
+    runConfig.updateRunParameters(m_runParams);
+    if(m_runParams.downstreamToUpstream){
+        flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresFrom);
+        flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresTo);
+        flowToVolumeDownstream.setExposure(true);
+        flowToVolumeUpstream.setExposure(true);
+
+        flowToVolumeDownstream.setRemove(true);
+        flowToVolumeUpstream.setRemove(false);
+
+        flowToVolumeDownstream.setAppend(false);
+        flowToVolumeUpstream.setAppend(true);
+
+        flowToVolumeDownstream.updateFromBackend();
+        flowToVolumeUpstream.updateFromBackend();
+    }
+    else if(m_runParams.upstreamToDownstream){
+        flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresFrom);
+        flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresTo);
+        flowToVolumeUpstream.setExposure(true);
+        flowToVolumeDownstream.setExposure(true);
+
+        flowToVolumeUpstream.setRemove(true);
+        flowToVolumeDownstream.setRemove(false);
+
+        flowToVolumeUpstream.setAppend(false);
+        flowToVolumeDownstream.setAppend(true);
+
+        flowToVolumeUpstream.updateFromBackend();
+        flowToVolumeDownstream.updateFromBackend();
+    }
+    else if(m_runParams.upstreamToAir){
+        flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresFrom);
+        flowToVolumeUpstream.setExposure(true);
+        flowToVolumeUpstream.setRemove(true);
+        flowToVolumeUpstream.setAppend(false);
+        flowToVolumeUpstream.updateFromBackend();
+    }
+    else if(m_runParams.downstreamToAir){
+        flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresFrom);
+        flowToVolumeDownstream.setExposure(true);
+        flowToVolumeDownstream.setRemove(true);
+        flowToVolumeDownstream.setAppend(false);
+        flowToVolumeDownstream.updateFromBackend();
+    }
+    else{
+        qDebug() << "Total error";
+        return;
+    }
+    
+    runConfig.logRunCreation();
+    runConfig.startRun();
+    emit actualRunChanged();
+    emit actualReadingChanged();
+}
+
+bool PhyMHC::getActualRun() const{
+    return runConfig.isRunLog();
+}
+
+bool PhyMHC::getActualReading() const{
+    return runConfig.isRunLog()&&(flowToVolumeUpstream.getExposure()||flowToVolumeDownstream.getExposure());
+}
+
+void PhyMHC::stopFromGui(){
+    runConfig.stopRun();
+    runConfig.updateRunParameters(m_runParams);
+    runConfig.insertTotalLitres();
+    emit actualRunChanged();
+    emit actualReadingChanged();
+    if(flowToVolumeUpstream.getExposure()){
+        flowToVolumeUpstream.setExposure(false);
+        flowToVolumeUpstream.updateFromBackend();
+    }
+    if(flowToVolumeDownstream.getExposure()){
+        flowToVolumeDownstream.setExposure(false);
+        flowToVolumeDownstream.updateFromBackend();
+    }
+    // clear from here
+    runConfig.formFileName();
+    // proceed to clear
+
 }
 
 // from script

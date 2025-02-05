@@ -22,5 +22,7 @@
         <file>qml/InfoScript.qml</file>
         <file>qml/TagChartTest.qml</file>
         <file>qml/ControllerStatus.qml</file>
+        <file>qml/DataWindow.qml</file>
+        <file>qml/FlowToVolume.qml</file>
     </qresource>
 </RCC>

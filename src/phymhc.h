@@ -3,12 +3,15 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 
+#include <QVariant>
+
 #include "scriptbase.h"
 #include "chart/customplotitem.h"
 #include "controllers/testcontroller.h"
 #include "controllers/controllerbase.h"
 #include "scalarcalc.h"
 #include "logdatabase.h"
+#include "runconfig.h"
 
 class PhyMHC : public QApplication
 {
@@ -17,6 +20,9 @@ class PhyMHC : public QApplication
     Q_PROPERTY (bool digitalConnected READ getDigitalConnected NOTIFY digitalConnectedChanged)
 
     Q_PROPERTY (guiValues guiVals READ getGuiVals NOTIFY guiValsChanged) //WRITE setExpTimingStruct 
+
+    Q_PROPERTY (bool actualRun READ getActualRun NOTIFY actualRunChanged)
+    Q_PROPERTY (bool actualReading READ getActualReading NOTIFY actualReadingChanged)
 
     // each bool property to each class (valves, heater, cooler, flow)
     Q_PROPERTY (bool vUpState READ getVUp WRITE setVUp NOTIFY vUpChanged)
@@ -34,6 +40,12 @@ public:
     ~PhyMHC();
     Q_INVOKABLE void getCustomPlotPtr(CustomPlotItem* testAxisTag);
     Q_INVOKABLE void manualTestControllerStart();
+
+    Q_INVOKABLE void runFromGui();
+    Q_INVOKABLE bool passRunParametersGui(const QVariantList &params);
+
+    Q_INVOKABLE void stopFromGui();
+
 private:
     void initGUI();
     void initDigitalData();
@@ -42,10 +54,14 @@ private:
     void icpAiController();
     void icpDoController();
     void initScalarCalc();
+    void initRunConfig();
     void initLogData();
 
     bool getDigitalConnected() const;
     bool getAnalogConnected() const;
+
+    bool getActualRun() const;
+    bool getActualReading() const;
 
     bool doSwitchChange();
 
@@ -73,6 +89,9 @@ signals:
 
     void guiValsChanged();
 
+    void actualRunChanged();
+    void actualReadingChanged();
+
     void vUpChanged();
     void vDwChanged();
     void vVaChanged();
@@ -88,6 +107,9 @@ private slots:
 private:
     
     ScriptBase m_scriptDefault;
+    ScalarCalc flowToVolumeUpstream;
+    ScalarCalc flowToVolumeDownstream;
+    RunConfig runConfig;
     QQmlApplicationEngine m_engine;
     
 
@@ -96,7 +118,6 @@ private:
     // ControllerData time;
     // ControllerData upstream;
     // ControllerData downstream;
-
     IcpAICtrl analogController;
 
     ControllerData timeAnalog; 
@@ -129,8 +150,6 @@ private:
     ExpData reactorUps; // throw out somewhere else, later
     ExpData reactorDws; // throw out somewhere else, later
 
-    ScalarCalc flowToVolumeUpstream;
-    ScalarCalc flowToVolumeDownstream;
-
+    RunParameters m_runParams;
     LogDataBase logData;
 };
