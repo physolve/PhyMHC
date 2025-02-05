@@ -41,6 +41,7 @@ public:
     void setData(DataCollection* ptr, LogType type);
     void updateRunParameters(const RunParameters& runParams);
     RunParameters getRunParameters() const;
+    void clearRunParameters();
     int todayRunCount();
     void formFileName();
     void logRunCreation();
@@ -74,7 +75,7 @@ private:
 
     void configurateHeader(QString &upHeader);
 
-    QStringList directoryRunNames;
+    // QStringList directoryRunNames;
     int todayRuns;
     QString m_filePath;
 

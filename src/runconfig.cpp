@@ -8,7 +8,6 @@ RunConfig::RunConfig(QObject *parent) : QObject(parent), m_runLogTimer(new QTime
     QDir dir("data");
     if (!dir.exists())
         dir.mkpath("data");
-    directoryRunNames = dir.entryList(QStringList() << "*.txt",QDir::Files);
     // this should compare string names with configurated name
     todayRuns = todayRunCount();
     qDebug() << "Today runs: " << todayRuns;
@@ -18,27 +17,7 @@ RunConfig::RunConfig(QObject *parent) : QObject(parent), m_runLogTimer(new QTime
     m_runLogTimer->setInterval(m_dataWriteFrequency*1000);
     connect(m_runLogTimer, &QTimer::timeout, this, &RunConfig::writeRunLog);
 
-    // defaults
-    m_runParams.runName = "Empty";
-    m_runParams.releaseFrom = "Из";
-    m_runParams.initialLitresFrom = 0;
-    m_runParams.loadTo = "В";
-    m_runParams.initialLitresTo = 0;
-    m_runParams.upstreamToDownstream = false;
-    m_runParams.downstreamToUpstream = false;
-    m_runParams.upstreamToAir = false;
-    m_runParams.downstreamToAir = false;
-    m_runParams.supplyToUpstream = false;
-    m_runParams.supplyToDownstream = false;
-    m_runParams.baseFileName = QDate::currentDate().toString("yyyy-MM-dd")+"_Из_В_№";
-    m_runParams.dayRunCnt = todayRuns;
-    m_runParams.logHeaderComment = "Empty";
-    m_runParams.totalLitresPass = 0;
-    m_runParams.endLitresTo = 0;
-    m_runParams.endLitresFrom = 0;
-    m_runParams.differenseToFrom = 0;
-    m_runParams.clockTime = "00:00:00";
-    m_runParams.totalTimeSec = 0;
+    clearRunParameters();
 
     emit totalRunsChanged();
 }
@@ -79,8 +58,34 @@ RunParameters RunConfig::getRunParameters() const{
     return m_runParams;
 }
 
+void RunConfig::clearRunParameters(){
+    // defaults
+    m_runParams.runName = "Empty";
+    m_runParams.releaseFrom = "Из";
+    m_runParams.initialLitresFrom = 0;
+    m_runParams.loadTo = "В";
+    m_runParams.initialLitresTo = 0;
+    m_runParams.upstreamToDownstream = false;
+    m_runParams.downstreamToUpstream = false;
+    m_runParams.upstreamToAir = false;
+    m_runParams.downstreamToAir = false;
+    m_runParams.supplyToUpstream = false;
+    m_runParams.supplyToDownstream = false;
+    m_runParams.baseFileName = QDate::currentDate().toString("yyyy-MM-dd")+"_Из_В_№";
+    m_runParams.dayRunCnt = todayRuns;
+    m_runParams.logHeaderComment = "Empty";
+    m_runParams.totalLitresPass = 0;
+    m_runParams.endLitresTo = 0;
+    m_runParams.endLitresFrom = 0;
+    m_runParams.differenseToFrom = 0;
+    m_runParams.clockTime = "00:00:00";
+    m_runParams.totalTimeSec = 0;
+}
+
 int RunConfig::todayRunCount(){
+    QDir dir("data");
     // let's find out today run count
+    const auto& directoryRunNames = dir.entryList(QStringList() << "*.txt",QDir::Files);
     QString compareTo = QDate::currentDate().toString("yyyy-MM-dd");
     auto runs = 0;
     for(const auto& str : directoryRunNames){
@@ -137,8 +142,8 @@ void RunConfig::logRunCreation(){
         head << borderUpHeader;
         head << upHeader;
         head << "***\tКомментарий:\t" << m_runParams.logHeaderComment << "\n";
-        head << "                                                           \n";
-        head << "                                                                                           \n";
+        head << "                                                           \n"; // shit
+        head << "                                                                                           \n"; // again
         // head << "\n";
         head << borderUpHeader;
         head << header << "\n";
@@ -175,8 +180,8 @@ void RunConfig::configurateHeader(QString &upHeader){
         regime = "баллона в TiFe";
         charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
     }
-    upHeader+= QString("***\tИз\t\t%1\n").arg(regime);
-    upHeader+= QString("***\tЗаряд до:\t%1\n").arg(charge);
+    upHeader+= QString("***\tЭксперимент:\t%1\n").arg(regime);
+    upHeader+= QString("***\tЗаряд до:\t\t%1\n").arg(charge);
 }
 
 void RunConfig::startRun(){
@@ -189,8 +194,6 @@ void RunConfig::stopRun(){
     // file close
     m_runLogTimer->stop();
     // ending something
-    // ________________
-    // you may append additional info into header using readLine to specific line
 }
 
 bool RunConfig::isRunLog() const{
@@ -220,7 +223,6 @@ void RunConfig::writeRunLog(){
     
     const auto &c_time = m_runTime.elapsed()/1000.0;
 
-    // line: "Time\tElapsed\tFlowUps\tPressureUps\tTemperatureUps\tFlowDws\tPressureDws\tTemperatureDws\tAccumReactorUps\tAccumReactorDws"
     QString line;
     line+= QTime::currentTime().toString() + "\t";
     line+= QString::number(c_time) + "\t";
@@ -269,8 +271,7 @@ void RunConfig::insertTotalLitres(){
         charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.endLitresTo);
     }
     insert << "***\tЗаряд после:\t" << charge << "\n";
-    insert << "***\tЗа время:\t" << m_runParams.clockTime << "\n";
-
+    insert << "***\tЗа время:\t\t" << m_runParams.clockTime << "\n";
     file.close(); 
 }
 

@@ -140,9 +140,9 @@ void PhyMHC::initRunConfig(){
     runConfig.setData(&reactorUps, LogType::LOG_reactorUps);
     runConfig.setData(&reactorDws, LogType::LOG_reactorDws);
     m_runParams = runConfig.getRunParameters();
-    m_runParams.initialLitresFrom = flowToVolumeUpstream.getCurrentScalar();
-    m_runParams.initialLitresTo = flowToVolumeDownstream.getCurrentScalar();
-    m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
+    // m_runParams.initialLitresFrom = flowToVolumeUpstream.getCurrentScalar();
+    // m_runParams.initialLitresTo = flowToVolumeDownstream.getCurrentScalar();
+    //m_runParams.clockTime = flowToVolumeUpstream.getClockTime(); // ?
     runConfig.updateRunParameters(m_runParams);
 }
 
@@ -190,9 +190,9 @@ bool PhyMHC::passRunParametersGui(const QVariantList &params){
     }
     m_runParams.runName = params.at(0).toString();
     m_runParams.releaseFrom = params.at(1).toString();
-    m_runParams.initialLitresFrom = params.at(2).toDouble();
+    m_runParams.endLitresFrom = m_runParams.initialLitresFrom = params.at(2).toDouble();
     m_runParams.loadTo = params.at(3).toString();
-    m_runParams.initialLitresTo = params.at(4).toDouble();
+    m_runParams.endLitresTo = m_runParams.initialLitresTo = params.at(4).toDouble();
     m_runParams.upstreamToDownstream = params.at(5).toBool();
     m_runParams.downstreamToUpstream = params.at(6).toBool();
     m_runParams.upstreamToAir = params.at(7).toBool();
@@ -357,7 +357,7 @@ bool PhyMHC::getActualReading() const{
 void PhyMHC::stopFromGui(){
     runConfig.stopRun();
     runConfig.updateRunParameters(m_runParams);
-    runConfig.insertTotalLitres();
+    runConfig.insertTotalLitres(); // log shit
     emit actualRunChanged();
     emit actualReadingChanged();
     if(flowToVolumeUpstream.getExposure()){
@@ -369,9 +369,11 @@ void PhyMHC::stopFromGui(){
         flowToVolumeDownstream.updateFromBackend();
     }
     // clear from here
+    backup_runParams = m_runParams;
+    runConfig.clearRunParameters();
+    m_runParams = runConfig.getRunParameters();
     runConfig.formFileName();
     // proceed to clear
-
 }
 
 // from script

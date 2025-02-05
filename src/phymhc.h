@@ -153,5 +153,6 @@ private:
     ExpData reactorDws; // throw out somewhere else, later
 
     RunParameters m_runParams;
+    RunParameters backup_runParams;
     LogDataBase logData;
 };

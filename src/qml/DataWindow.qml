@@ -20,7 +20,28 @@ Item{
             newName+= "_"+dayRuns
         fileName.text = newName
     }
-
+    function updateScalarValueFrom(){
+        if(fromChoose.currentText == "LaNi5"){
+            initialFrom.text = scalarUpstream.currentScalar.toFixed(3)
+        }
+        else if(fromChoose.currentText == "TiFe"){
+            initialFrom.text = scalarDownstream.currentScalar.toFixed(3)
+        }
+        else if(fromChoose.currentText == "баллон"){
+            initialFrom.text = 0 // i dont know баллон yet, like inf
+        }
+    }
+    function updateScalarValueTo(){
+        if(toChoose.currentText == "LaNi5"){
+            initialTo.text = scalarUpstream.currentScalar.toFixed(3)
+        }
+        else if(toChoose.currentText == "TiFe"){
+            initialTo.text = scalarDownstream.currentScalar.toFixed(3)
+        }
+        else if(toChoose.currentText == "воздух"){
+            initialTo.text = 0 // air is 0
+        }
+    }
     function startRun(){
         let m_parameters = []
         if(!passRunConfig(m_parameters)){
@@ -36,8 +57,54 @@ Item{
     }
 
     function stopRun(){
-        // savings clearing
+        // table and gui changes
+        let tableColumns = []
+        // runCnt:0 // name:1 // passed:2 // from:3 // chargeFrom:4 // to:5 // chargeTo:6 // time:7     
+        let dayRuns = runConfig.totalRuns   
+        tableColumns.push(dayRuns)
+        tableColumns.push(runName.text)
+        tableColumns.push(runConfig.totalLitres.toPrecision(3))
+        tableColumns.push(fromChoose.currentText)
+        tableColumns.push("")
+        tableColumns.push(toChoose.currentText)
+        tableColumns.push("")
+        if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "TiFe"){
+            tableColumns[4] = scalarUpstream.currentScalar.toFixed(3)
+            tableColumns[6] = scalarDownstream.currentScalar.toFixed(3)
+        }
+        else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "LaNi5"){
+            tableColumns[4] = scalarDownstream.currentScalar.toFixed(3)
+            tableColumns[6] = scalarUpstream.currentScalar.toFixed(3)
+        }
+        else if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "воздух"){
+            tableColumns[4] = scalarUpstream.currentScalar.toFixed(3)
+            tableColumns[6] = "-"
+        }
+        else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "воздух"){
+            tableColumns[4] = scalarDownstream.currentScalar.toFixed(3)
+            tableColumns[6] = "-"
+        }
+        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+            tableColumns[4] = "-"
+            tableColumns[6] = scalarUpstream.currentScalar.toFixed(3)
+        }
+        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+            tableColumns[4] = "-"
+            tableColumns[6] = scalarDownstream.currentScalar.toFixed(3)
+        }    
+        tableColumns.push(runConfig.duration)
+        expTable.appendByColumns(tableColumns)
+        tableScrollExp.scrollToBottom()
+        // updateFilePath()
         backend.stopFromGui()
+        // savings clearing
+        runName.text = ""
+        fromChoose.currentIndex = -1
+        toChoose.currentIndex = -1
+        updateFilePath()
+        initialFrom.text = ""
+        initialTo.text = ""
+        logComment.text = ""
     }
 
     function passRunConfig(parameters){
@@ -118,8 +185,6 @@ Item{
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        // anchors.horizontalCenter: parent.horizontalCenter
-        // width: 500
         anchors.leftMargin: 20
         anchors.rightMargin: 40
         anchors.topMargin: 110
@@ -128,75 +193,87 @@ Item{
         TextField{
             id: runName
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width * 0.3
+            Layout.preferredWidth: parent.width * 0.26
             // property int curRunCnt:  flowToVolume ? flowToVolume.runCnt : 0
             // text: "Запуск #" + curRunCnt
-            font.pointSize: 12
+            font.pointSize: 11
             placeholderText: "Имя запуска"
             horizontalAlignment: TextInput.AlignHCenter
         }
         ComboBox {
             id: fromChoose
             Layout.fillHeight: true
+            Layout.preferredWidth: parent.width * 0.20
             currentIndex: -1
             model: ["LaNi5", "TiFe", "баллон"]
             displayText: "Из " + currentText
             onActivated: {
                 updateFilePath()
+                updateScalarValueFrom()
             }
         }
         ComboBox {
             id: toChoose
             Layout.fillHeight: true
+            Layout.preferredWidth: parent.width * 0.20
             currentIndex: -1
             model: ["LaNi5", "TiFe", "воздух"]
             displayText: "В " + currentText
             onActivated: {
                 updateFilePath()
+                updateScalarValueTo()
             }
         }
         TextField{
             id: fileName
             Layout.fillHeight: true
-            Layout.preferredWidth: parent.width * 0.3
+            Layout.preferredWidth: parent.width * 0.34
             // property int curRunCnt:  flowToVolume ? flowToVolume.runCnt : 0
             // text: "Запуск #" + curRunCnt
             font.pointSize: 10
             placeholderText: "Имя файла"
             horizontalAlignment: TextInput.AlignHCenter
             Component.onCompleted: updateFilePath()
-            // {
-            //     text = currentDate.toLocaleString(Qt.locale(),"yyyy-MM-dd")+"_Из_В";
-            // }
         }
     }
     RowLayout{
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.leftMargin: 210
-        anchors.rightMargin: 205
+        anchors.leftMargin: 20
+        anchors.rightMargin: 40
         anchors.topMargin: 160
-        // anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 10
+        Layout.alignment: Qt.AlignHCenter
+        Rectangle{
+            Layout.fillHeight: true
+            Layout.preferredWidth: parent.width * 0.26
+            color: "transparent"
+        }
         TextField{
             id: initialFrom
             Layout.fillHeight: true
             font.pointSize: 12
             // text: "0"
-            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 2; locale: "us_US"}
+            Layout.preferredWidth: parent.width * 0.20
+            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 3; locale: "us_US"}
             placeholderText: "Заряд л. "
             horizontalAlignment: TextInput.AlignHCenter
-            Layout.alignment: Qt.AlignHCenter
         }
         TextField{
             id: initialTo
             Layout.fillHeight: true
             font.pointSize: 12
             // text: "0"
-            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 2; locale: "us_US"}
+            Layout.preferredWidth: parent.width * 0.20
+            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 3; locale: "us_US"}
             placeholderText: "Заряд л."
             horizontalAlignment: TextInput.AlignHCenter
-            Layout.alignment: Qt.AlignHCenter
+        }
+        Rectangle{
+            Layout.fillHeight: true
+            Layout.preferredWidth: parent.width * 0.34
+            color: "transparent"
         }
     }
     TextField{
@@ -272,16 +349,18 @@ Item{
         anchors.right: parent.right
         anchors.leftMargin: 20
         anchors.rightMargin: 20
-        anchors.topMargin: 380
+        anchors.topMargin: 400
         height: 350
         background: Rectangle {
             anchors.fill: parent
             opacity: 0.3
-            color: "#a5a4a4"
+            color: "#b8b6b6"
+            border.color: "brown"
+            border.width: 5
+            radius: 5
         }
         FlowToVolume{
             id: expTable
-            
             // onClicked: function(row, rowData) { print('onClicked', row, JSON.stringify(rowData)); }
         }
         contentWidth: children.implicitWidth
