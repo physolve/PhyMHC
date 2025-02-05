@@ -57,13 +57,13 @@ Item {
                 color: "white"
             }
             TextField{
-                id: startLitersUpstream
+                id: startLitresUpstream
                 font.pointSize: 11
                 placeholderText: "литры"
             }
             Button{
                 text: "Apply"
-                onClicked: scalarUpstream.setVolumeValue(startLitersUpstream.text)
+                onClicked: scalarUpstream.setVolumeValue(startLitresUpstream.text)
             }
         }
         Row{
@@ -132,13 +132,13 @@ Item {
                 color: "white"
             }
             TextField{
-                id: startLitersDownstream
+                id: startLitresDownstream
                 font.pointSize: 11
                 placeholderText: "литры"
             }
             Button{
                 text: "Apply"
-                onClicked: scalarDownstream.setVolumeValue(startLitersDownstream.text)
+                onClicked: scalarDownstream.setVolumeValue(startLitresDownstream.text)
             }
         }
         Row{

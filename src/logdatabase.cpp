@@ -7,7 +7,7 @@ LogDataBase::LogDataBase(QObject* parent) : QObject(parent), m_logTimer(new QTim
     if (!dir.exists())
         dir.mkpath("data");
     QFile file;
-    m_filePath = dir.filePath(QString("log-%1.txt").arg(QDate::currentDate().toString()));
+    m_filePath = dir.filePath(QString("log-%1.log").arg(QDate::currentDate().toString()));
     file.setFileName(m_filePath);
     if (!file.open(QIODevice::ReadWrite))
         return;
@@ -33,7 +33,6 @@ LogDataBase::~LogDataBase(){
     if(m_logTimer->isActive()) m_logTimer->stop();
     // file close if so
     // clear pointers
-    time = nullptr;
     tcUp = nullptr;
     prUp = nullptr;
     flUp = nullptr;
@@ -46,7 +45,6 @@ LogDataBase::~LogDataBase(){
 
 void LogDataBase::setData(DataCollection* ptr, LogType type){
     switch(type){
-        case LogType::LOG_time: time = ptr; break;
         case LogType::LOG_tcUp: tcUp = ptr; break;
         case LogType::LOG_prUp: prUp = ptr; break;
         case LogType::LOG_flUp: flUp = ptr; break;

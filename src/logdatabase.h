@@ -1,22 +1,8 @@
 #pragma once
 
 #include "datacollection.h"
-#include <QObject>
-// #include <QFileDialog>
 #include <QElapsedTimer>
 #include <QTimer>
-
-enum LogType{
-    LOG_time,
-    LOG_tcUp,
-    LOG_prUp,
-    LOG_flUp,
-    LOG_tcDw,
-    LOG_prDw,
-    LOG_flDw,
-    LOG_reactorUps,
-    LOG_reactorDws
-};
 
 class LogDataBase : public QObject
 {
@@ -42,7 +28,6 @@ private:
 
     QString m_filePath;
     // pointers for every data
-    DataCollection* time;
     DataCollection* tcUp;
     DataCollection* prUp;
     DataCollection* flUp;

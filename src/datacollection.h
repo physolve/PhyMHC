@@ -14,6 +14,17 @@ enum DataType{
     TYPE_flDw
 };
 
+enum LogType{
+    LOG_tcUp,
+    LOG_prUp,
+    LOG_flUp,
+    LOG_tcDw,
+    LOG_prDw,
+    LOG_flDw,
+    LOG_reactorUps,
+    LOG_reactorDws
+};
+
 struct guiValues{ // sample
     Q_GADGET
     // it might be linked to json for import and multi-result log

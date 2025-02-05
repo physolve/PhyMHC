@@ -16,7 +16,7 @@ class ScalarCalc : public QObject
     // Q_PROPERTY (QString clockTime READ getClockTime NOTIFY clockTimeChanged)
     // Q_PROPERTY (QString scalarStr READ getScalarStr NOTIFY scalarStrChanged)
     // Q_PROPERTY(int runCnt READ getRunCnt NOTIFY runCntChanged)
-    Q_PROPERTY (bool exposure READ getExposure WRITE setExposure)
+    Q_PROPERTY (bool exposure READ getExposure WRITE setExposure  NOTIFY exposureChanged)
     Q_PROPERTY (bool append READ getAppend WRITE setAppend NOTIFY appendChanged)
     Q_PROPERTY (bool remove READ getRemove WRITE setRemove NOTIFY removeChanged)
     Q_PROPERTY (double currentScalar READ getCurrentScalar NOTIFY currentScalarChanged)
@@ -34,7 +34,11 @@ public:
     void calcScalar(double y0, double y1, qreal x0, qreal x1);
     void setCurrentScalar(double scalar);
     double getCurrentScalar() const;
-    // QString getClockTime() const;
+
+    void updateFromBackend();
+
+    int getSecondsTime() const;
+    QString getClockTime() const;
     // QString getScalarStr() const;
     // int getRunCnt() const;
     // QVariantList getDataCollection() const;
@@ -51,6 +55,7 @@ signals:
     // void clockTimeChanged();
     // void scalarStrChanged();
     // void runCntChanged();
+    void exposureChanged();
     void appendChanged();
     void removeChanged();
     void currentScalarChanged();
@@ -59,7 +64,7 @@ private:
     // QString m_currentCollection;
     QString clockTime;
     QTime m_timeStart;
-    //int m_duration;
+    int m_duration;
     double m_currentScalar;
 
     bool isExposure;

@@ -6,11 +6,19 @@ ScalarCalc::ScalarCalc(QObject *parent) : QObject(parent), isExposure(false), is
     m_previousFlowAppend = 0;
     m_previousFlowRemove = 0;
     m_previousTime = 0;
+    clockTime = "00:00:00";
 }
 
 ScalarCalc::~ScalarCalc(){
-
+    qDebug() << "Scalar Calc destructor";
 }
+
+void ScalarCalc::updateFromBackend(){
+    emit exposureChanged();
+    emit appendChanged();
+    emit removeChanged();
+}
+
 
 // void ScalarCalc::onFlowToScalarClicked(const QString &name, bool s)
 // {
@@ -49,6 +57,7 @@ void ScalarCalc::setVolumeValue(double volumeValue){
 
 void ScalarCalc::setExposure(bool state){
     isExposure = state;
+    m_timeStart = QTime::currentTime();
     if(!isExposure){
         isAppend = false;
         isRemove = false;
@@ -117,24 +126,26 @@ void ScalarCalc::processCalc(){
     m_previousTime = curTime;
     m_reactorCharge->addPoint(m_currentScalar);
     emit currentScalarChanged();
+    m_duration = m_timeStart.secsTo(QTime::currentTime());
+    clockTime = QTime(0,0,0,0).addSecs(m_duration).toString("hh:mm:ss");
+    // emit clockTimeChanged();
 }
 
 void ScalarCalc::calcScalar(double y0, double y1, qreal x0, qreal x1){
     double scalar = (y0+y1)/2*(x1-x0)/60;
-
     // it might be based on m_reactorCharge
-    this->m_currentScalar += scalar; // liters
-
+    this->m_currentScalar += scalar; // litres
     // scalarStr = QString::number(this->m_currentScalar, 'g', 5);
     // emit scalarStrChanged();
-    auto duration = m_timeStart.secsTo(QTime::currentTime());
-    clockTime = QTime(0,0,0,0).addSecs(duration).toString("hh:mm:ss");
-    // emit clockTimeChanged();
 }
 
-// QString ScalarCalc::getClockTime() const{
-//     return clockTime;
-// }
+QString ScalarCalc::getClockTime() const{
+    return clockTime;
+}
+
+int ScalarCalc::getSecondsTime() const{
+    return m_duration;
+}
 
 // QString ScalarCalc::getScalarStr() const{
 //     return scalarStr;

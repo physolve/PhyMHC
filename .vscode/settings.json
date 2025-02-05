@@ -3,6 +3,17 @@
     "files.associations": {
         "qdebug": "cpp",
         "cmath": "cpp",
-        "qelapsedtimer": "cpp"
+        "qelapsedtimer": "cpp",
+        "qtimer": "cpp",
+        "fstream": "cpp",
+        "chrono": "cpp",
+        "qmap": "cpp",
+        "qvariant": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "vector": "cpp"
     }
 }
