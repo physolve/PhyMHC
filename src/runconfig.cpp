@@ -28,6 +28,8 @@ RunConfig::RunConfig(QObject *parent) : QObject(parent), m_runLogTimer(new QTime
     m_runParams.downstreamToUpstream = false;
     m_runParams.upstreamToAir = false;
     m_runParams.downstreamToAir = false;
+    m_runParams.supplyToUpstream = false;
+    m_runParams.supplyToDownstream = false;
     m_runParams.baseFileName = QDate::currentDate().toString("yyyy-MM-dd")+"_Из_В_№";
     m_runParams.dayRunCnt = todayRuns;
     m_runParams.logHeaderComment = "Empty";
@@ -118,15 +120,15 @@ void RunConfig::logRunCreation(){
     // upHeader {Reactor 1 info} // {Reactor 2 info}
     // endUpHeader
     QString borderUpHeader;
-    for(auto i = 0; i < 30; i++){
+    for(auto i = 0; i < 50; i++){
         borderUpHeader += "*";
+        if(i == 24)
+            borderUpHeader+=m_runParams.runName;
     }
     borderUpHeader += "\n";
     QString upHeader;
-    upHeader = QString("***\t%1, %2 л.\t %3, %4 л.)").arg(m_runParams.releaseFrom).arg(m_runParams.initialLitresFrom)
-    .arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
-    upHeader += "\n";
-    QString header = "Time\tElapsed\tFlowUps\tPressureUps\tTemperatureUps\tFlowDws\tPressureDws\tTemperatureDws\tReactorChargeUps\tReactorChargeDws";
+    configurateHeader(upHeader);
+    QString header = "Время\tИстекло\tПоток в LaNi5\tДавление LaNi5\tТемпература LaNi5\tПоток в TiFe\tДавление TiFe\tТемпература TiFe\tЗаряд LaNi5\tЗаряд TiFe";
     QTextStream in(&file);
     QString line;
     line = in.readLine();
@@ -134,15 +136,52 @@ void RunConfig::logRunCreation(){
         QTextStream head(&file);
         head << borderUpHeader;
         head << upHeader;
-        head << "***\tComment: " << m_runParams.logHeaderComment << "\n";
+        head << "***\tКомментарий:\t" << m_runParams.logHeaderComment << "\n";
+        head << "                                                           \n";
+        head << "                                                                                           \n";
+        // head << "\n";
         head << borderUpHeader;
         head << header << "\n";
     }
     file.close();
 }
 
+void RunConfig::configurateHeader(QString &upHeader){
+    QString regime;
+    QString charge;
+    if(m_runParams.upstreamToDownstream){
+        regime = "LaNi5 в TiFe";
+        charge = QString("%1, %2 л.; %3, %4 л.").arg(m_runParams.releaseFrom).arg(m_runParams.initialLitresFrom)
+    .arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
+    }
+    else if(m_runParams.downstreamToUpstream){
+        regime = "TiFe в LaNi5";
+        charge = QString("%1, %2 л.; %3, %4 л.").arg(m_runParams.releaseFrom).arg(m_runParams.initialLitresFrom)
+    .arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
+    }
+    else if(m_runParams.upstreamToAir){
+        regime = "LaNi5 в воздух";
+        charge = QString("%1, %2 л.").arg(m_runParams.releaseFrom).arg(m_runParams.initialLitresFrom);
+    }
+    else if(m_runParams.downstreamToAir){
+        regime = "TiFe в воздух";
+        charge = QString("%1, %2 л.").arg(m_runParams.releaseFrom).arg(m_runParams.initialLitresFrom);
+    }
+    else if(m_runParams.supplyToUpstream){
+        regime = "баллона в LaNi5";
+        charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
+    }
+    else if(m_runParams.supplyToDownstream){
+        regime = "баллона в TiFe";
+        charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
+    }
+    upHeader+= QString("***\tИз\t\t%1\n").arg(regime);
+    upHeader+= QString("***\tЗаряд до:\t%1\n").arg(charge);
+}
+
 void RunConfig::startRun(){
     m_runTime.start();
+    writeRunLog();
     m_runLogTimer->start();
 }
 
@@ -202,12 +241,36 @@ void RunConfig::insertTotalLitres(){
     if (!file.open(QIODevice::ReadWrite))
         return;
     QTextStream in(&file);
-    for(int i = 0; i < 3; ++i){
+    for(int i = 0; i < 4; ++i){
         in.readLine();
     }
     QTextStream insert(&file);
     insert.seek(in.pos());
-    insert << "***\tTotal litres: " << m_runParams.totalLitresPass << "\n";
+    insert << "***\tЛитров прошло:\t" << m_runParams.totalLitresPass << "\n";
+    QString charge;
+    if(m_runParams.upstreamToDownstream){
+        charge = QString("%1, %2 л.; %3, %4 л.").arg(m_runParams.releaseFrom).arg(m_runParams.endLitresFrom)
+    .arg(m_runParams.loadTo).arg(m_runParams.endLitresTo);
+    }
+    else if(m_runParams.downstreamToUpstream){
+        charge = QString("%1, %2 л.; %3, %4 л.").arg(m_runParams.releaseFrom).arg(m_runParams.endLitresFrom)
+    .arg(m_runParams.loadTo).arg(m_runParams.endLitresTo);
+    }
+    else if(m_runParams.upstreamToAir){
+        charge = QString("%1, %2 л.").arg(m_runParams.releaseFrom).arg(m_runParams.endLitresFrom);
+    }
+    else if(m_runParams.downstreamToAir){
+        charge = QString("%1, %2 л.").arg(m_runParams.releaseFrom).arg(m_runParams.endLitresFrom);
+    }
+    else if(m_runParams.supplyToUpstream){
+        charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.endLitresTo);
+    }
+    else if(m_runParams.supplyToDownstream){
+        charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.endLitresTo);
+    }
+    insert << "***\tЗаряд после:\t" << charge << "\n";
+    insert << "***\tЗа время:\t" << m_runParams.clockTime << "\n";
+
     file.close(); 
 }
 

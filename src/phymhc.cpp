@@ -184,7 +184,7 @@ bool PhyMHC::doSwitchChange(){
 }
 
 bool PhyMHC::passRunParametersGui(const QVariantList &params){
-    if(params.isEmpty() || params.count() != 10){
+    if(params.isEmpty() || params.count() != 12){
         qDebug() << "Passed wrong paramters";
         return false;
     }
@@ -197,7 +197,9 @@ bool PhyMHC::passRunParametersGui(const QVariantList &params){
     m_runParams.downstreamToUpstream = params.at(6).toBool();
     m_runParams.upstreamToAir = params.at(7).toBool();
     m_runParams.downstreamToAir = params.at(8).toBool();
-    m_runParams.logHeaderComment = params.at(9).toString();
+    m_runParams.supplyToUpstream = params.at(9).toBool();
+    m_runParams.supplyToDownstream = params.at(10).toBool();
+    m_runParams.logHeaderComment = params.at(11).toString();
     return true;
 }
 
@@ -220,8 +222,14 @@ void PhyMHC::guiValsUpdate(){
 
     //updateRunParams
     // if runConfig to runConfig
+    if(runConfig.isRunLog()){
+        updateGuiRun();
+    }
+}
+
+void PhyMHC::updateGuiRun(){  
     if(m_runParams.downstreamToUpstream){
-        m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresTo;
         m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.endLitresFrom = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.differenseToFrom = (m_runParams.initialLitresFrom-m_runParams.endLitresFrom)-(m_runParams.endLitresTo-m_runParams.initialLitresTo);
@@ -229,7 +237,7 @@ void PhyMHC::guiValsUpdate(){
         m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
     else if(m_runParams.upstreamToDownstream){
-        m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresTo;
         m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.endLitresFrom = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.differenseToFrom = (m_runParams.initialLitresFrom-m_runParams.endLitresFrom)-(m_runParams.endLitresTo-m_runParams.initialLitresTo);
@@ -237,20 +245,30 @@ void PhyMHC::guiValsUpdate(){
         m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
     }
     else if(m_runParams.upstreamToAir){
-        m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.totalLitresPass = m_runParams.initialLitresFrom-flowToVolumeUpstream.getCurrentScalar();
         m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
     else if(m_runParams.downstreamToAir){
-        m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresFrom;
+        m_runParams.totalLitresPass = m_runParams.initialLitresFrom-flowToVolumeDownstream.getCurrentScalar();
         m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
     }
-    if(runConfig.isRunLog()){
-        runConfig.updateRunParameters(m_runParams);
+    else if(m_runParams.supplyToUpstream){
+        m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresTo;
+        m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
+        m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
+        m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
+    else if(m_runParams.supplyToDownstream){
+        m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresTo;
+        m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
+        m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
+        m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
+    }
+    runConfig.updateRunParameters(m_runParams);
 }
 
 guiValues PhyMHC::getGuiVals() const{
@@ -301,6 +319,20 @@ void PhyMHC::runFromGui(){
         flowToVolumeDownstream.setExposure(true);
         flowToVolumeDownstream.setRemove(true);
         flowToVolumeDownstream.setAppend(false);
+        flowToVolumeDownstream.updateFromBackend();
+    }
+    else if(m_runParams.supplyToUpstream){
+        flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresTo);
+        flowToVolumeUpstream.setExposure(true);
+        flowToVolumeUpstream.setRemove(false);
+        flowToVolumeUpstream.setAppend(true);
+        flowToVolumeUpstream.updateFromBackend();
+    }
+    else if(m_runParams.supplyToDownstream){
+        flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresTo);
+        flowToVolumeDownstream.setExposure(true);
+        flowToVolumeDownstream.setRemove(false);
+        flowToVolumeDownstream.setAppend(true);
         flowToVolumeDownstream.updateFromBackend();
     }
     else{

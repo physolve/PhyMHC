@@ -63,6 +63,8 @@ private:
     bool getActualRun() const;
     bool getActualReading() const;
 
+    void updateGuiRun();
+
     bool doSwitchChange();
 
     void setVUp(bool state);

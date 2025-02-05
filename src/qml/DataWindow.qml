@@ -59,33 +59,35 @@ Item{
         
         if(initialTo.text) parameters.push(initialTo.text) // initialLitresTo 4
         else parameters.push(0)
+        parameters.push(false)
+        parameters.push(false)
+        parameters.push(false)
+        parameters.push(false)
+        parameters.push(false)
+        parameters.push(false)
         // upstreamToDownstream 5
         // downstreamToUpstream 6
         // upstreamToAir 7
         // downstreamToAir 8
+        // supplyToUpstream 9
+        // supplyToDownstream 10
         if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "TiFe"){
-            parameters.push(true)
-            parameters.push(false)
-            parameters.push(false)
-            parameters.push(false)
+            parameters[5] = true;
         }
         else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "LaNi5"){
-            parameters.push(false)
-            parameters.push(true)
-            parameters.push(false)
-            parameters.push(false)
+            parameters[6] = true;
         }
         else if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "воздух"){
-            parameters.push(false)
-            parameters.push(false)
-            parameters.push(true)
-            parameters.push(false)
+            parameters[7] = true;
         }
         else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "воздух"){
-            parameters.push(false)
-            parameters.push(false)
-            parameters.push(false)
-            parameters.push(true)
+            parameters[8] = true;
+        }
+        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+            parameters[9] = true;
+        }
+        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+            parameters[10] = true;
         }
         else{
             console.log("Wrong parameters")
@@ -93,9 +95,8 @@ Item{
             return false
         }
 
-        if(logComment.text) parameters.push(logComment.text) // logHeaderComment 9
+        if(logComment.text) parameters.push(logComment.text) // logHeaderComment 11
         else parameters.push("No comments")
-
         return true
     }
     Label {
@@ -138,7 +139,7 @@ Item{
             id: fromChoose
             Layout.fillHeight: true
             currentIndex: -1
-            model: ["LaNi5", "TiFe"]
+            model: ["LaNi5", "TiFe", "баллон"]
             displayText: "Из " + currentText
             onActivated: {
                 updateFilePath()
@@ -182,7 +183,7 @@ Item{
             Layout.fillHeight: true
             font.pointSize: 12
             // text: "0"
-            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 2}
+            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 2; locale: "us_US"}
             placeholderText: "Заряд л. "
             horizontalAlignment: TextInput.AlignHCenter
             Layout.alignment: Qt.AlignHCenter
@@ -192,7 +193,7 @@ Item{
             Layout.fillHeight: true
             font.pointSize: 12
             // text: "0"
-            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 2}
+            validator: DoubleValidator {bottom: 0; top: 1000; decimals: 2; locale: "us_US"}
             placeholderText: "Заряд л."
             horizontalAlignment: TextInput.AlignHCenter
             Layout.alignment: Qt.AlignHCenter
@@ -228,7 +229,7 @@ Item{
             id: scalar
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width * 0.3
-            text : runConfig.totalLitres
+            text : runConfig.totalLitres.toPrecision(3)
             readOnly: true
             font.pointSize: 12
             placeholderText: "Итого литров"

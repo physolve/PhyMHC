@@ -15,6 +15,8 @@ struct RunParameters{
     bool downstreamToUpstream;
     bool upstreamToAir;
     bool downstreamToAir;
+    bool supplyToUpstream;
+    bool supplyToDownstream;
     QString baseFileName;
     int dayRunCnt;
     QString logHeaderComment;
@@ -69,6 +71,8 @@ private:
 
     // change parameters to stucture
     RunParameters m_runParams;
+
+    void configurateHeader(QString &upHeader);
 
     QStringList directoryRunNames;
     int todayRuns;
