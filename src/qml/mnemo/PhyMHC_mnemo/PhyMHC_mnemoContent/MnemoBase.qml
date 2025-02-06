@@ -110,17 +110,20 @@ Item {
         x: 233
         y: 690
         z: 0
+        cooling: backend.coolDwState
     }
 
     Cooler {
         x: 318
         y: 690
         z: 0
+        cooling: backend.coolDwState
     }
     Cooler {
         x: 403
         y: 690
         z: 0
+        cooling: backend.coolDwState
     }
     Switch {
         id: fanSwitchDw

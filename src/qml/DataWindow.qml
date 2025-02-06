@@ -153,7 +153,7 @@ Item{
         else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
             parameters[9] = true;
         }
-        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "TiFe"){
             parameters[10] = true;
         }
         else{
