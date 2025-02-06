@@ -88,7 +88,7 @@ Item{
             tableColumns[4] = "-"
             tableColumns[6] = scalarUpstream.currentScalar.toFixed(3)
         }
-        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "TiFe"){
             tableColumns[4] = "-"
             tableColumns[6] = scalarDownstream.currentScalar.toFixed(3)
         }    
