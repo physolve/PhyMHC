@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Controls.Material 2.12
-import QtCharts
+// import QtCharts
 import "mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent"
 ApplicationWindow {
     id: main
@@ -13,8 +13,6 @@ ApplicationWindow {
     visible: true
     title: qsTr("PhyMHC")
     // visibility: Window.Maximized
-    // Material.theme: Material.Dark
-    // Material.accent: Material.Indigo
     // font.capitalization: Font.MixedCase
     SplitView {
         id: grid
@@ -27,15 +25,11 @@ ApplicationWindow {
             SplitView.minimumWidth: 1080
         }
         Item{
-            // SplitView.minimumWidth: 500
-            // SplitView.preferredWidth: 670
             TabBar {
                 id: barMain
                 width: parent.width
                 anchors.top: parent.top
                 anchors.left: parent.left
-                //anchors.right: parent.right
-                //height: 100
                 Repeater{
                     id: barMainRepeater
                     model: ["Измерение", "График", "Дополнительно", "Настройки"]
@@ -48,14 +42,10 @@ ApplicationWindow {
             }
             StackLayout {
                 id: layoutMain
-                //Layout.fillWidth: true
-                //width: 600
-                //height: 800
                 anchors.top: barMain.bottom
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
-                //width: parent.width
                 currentIndex: barMain.currentIndex
                 Item{
                     Layout.fillHeight: true
