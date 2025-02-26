@@ -246,13 +246,13 @@ void PhyMHC::updateGuiRun(){
     }
     else if(m_runParams.upstreamToAir){
         m_runParams.totalLitresPass = m_runParams.initialLitresFrom-flowToVolumeUpstream.getCurrentScalar();
-        m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
+        m_runParams.endLitresFrom = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
     else if(m_runParams.downstreamToAir){
         m_runParams.totalLitresPass = m_runParams.initialLitresFrom-flowToVolumeDownstream.getCurrentScalar();
-        m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
+        m_runParams.endLitresFrom = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
     }
