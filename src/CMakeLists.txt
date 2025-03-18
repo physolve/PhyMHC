@@ -96,6 +96,7 @@ if (WIN32)
                 Qt6::PrintSupport
                 Qt6::SerialPort
                 Qt6::OpenGL
+                Qt6::SerialBus
                 opengl32
         )
 else()
@@ -107,6 +108,7 @@ else()
             Qt6::PrintSupport
             Qt6::SerialPort
             Qt6::OpenGL
+            Qt6::SerialBus
             USBIO_64
     )
 endif()
