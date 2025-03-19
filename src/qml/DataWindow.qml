@@ -27,8 +27,8 @@ Item{
         else if(fromChoose.currentText == "TiFe"){
             initialFrom.text = scalarDownstream.currentScalar.toFixed(3)
         }
-        else if(fromChoose.currentText == "баллон"){
-            initialFrom.text = 0 // i dont know баллон yet, like inf
+        else if(fromChoose.currentText == "компрессор"){
+            initialFrom.text = 0
         }
     }
     function updateScalarValueTo(){
@@ -53,6 +53,7 @@ Item{
             startScalarCalc.checked = false
             return
         }
+        prepareDialog(m_parameters)
         backend.runFromGui()
     }
 
@@ -76,19 +77,19 @@ Item{
             tableColumns[4] = scalarDownstream.currentScalar.toFixed(3)
             tableColumns[6] = scalarUpstream.currentScalar.toFixed(3)
         }
-        else if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "воздух"){
-            tableColumns[4] = scalarUpstream.currentScalar.toFixed(3)
-            tableColumns[6] = "-"
-        }
-        else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "воздух"){
-            tableColumns[4] = scalarDownstream.currentScalar.toFixed(3)
-            tableColumns[6] = "-"
-        }
-        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
+        // else if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "воздух"){
+        //     tableColumns[4] = scalarUpstream.currentScalar.toFixed(3)
+        //     tableColumns[6] = "-"
+        // }
+        // else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "воздух"){
+        //     tableColumns[4] = scalarDownstream.currentScalar.toFixed(3)
+        //     tableColumns[6] = "-"
+        // }
+        else if(fromChoose.currentText == "компрессор"&&toChoose.currentText == "LaNi5"){
             tableColumns[4] = "-"
             tableColumns[6] = scalarUpstream.currentScalar.toFixed(3)
         }
-        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "TiFe"){
+        else if(fromChoose.currentText == "компрессор"&&toChoose.currentText == "TiFe"){
             tableColumns[4] = "-"
             tableColumns[6] = scalarDownstream.currentScalar.toFixed(3)
         }    
@@ -144,16 +145,20 @@ Item{
         else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "LaNi5"){
             parameters[6] = true;
         }
-        else if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "воздух"){
-            parameters[7] = true;
+        // else if(fromChoose.currentText == "LaNi5"&&toChoose.currentText == "воздух"){
+        //     parameters[7] = true;
+        // }
+        // else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "воздух"){
+        //     parameters[8] = true;
+        // }
+        else if(fromChoose.currentText == "компрессор"&&toChoose.currentText == "LaNi5"){
+            // parameters[9] = true;
+            // suppress
+            console.log("Wrong parameters")
+            // show error message
+            return false
         }
-        else if(fromChoose.currentText == "TiFe"&&toChoose.currentText == "воздух"){
-            parameters[8] = true;
-        }
-        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "LaNi5"){
-            parameters[9] = true;
-        }
-        else if(fromChoose.currentText == "баллон"&&toChoose.currentText == "TiFe"){
+        else if(fromChoose.currentText == "компрессор"&&toChoose.currentText == "TiFe"){
             parameters[10] = true;
         }
         else{
@@ -166,6 +171,24 @@ Item{
         else parameters.push("No comments")
         return true
     }
+    function prepareDialog(parameters){
+        let infoString = ""
+        if(parameters[5]){
+            infoString = "Ручные клапаны 6 и 2; Пневмо клапан 5"
+        }
+        else if(parameters[6]){
+            infoString = "Ручные клапаны 4 и 6; Пневмо клапан 3"
+        }
+        else if(parameters[10]){
+            infoString = "Ручной клапан 2; Пневмо клапаны 1 и 5"
+        }
+        else{
+            return
+        }
+        dialog.informativeText = infoString
+        dialog.open()
+    }
+
     Label {
         id: logTextDisplay
         anchors.top: parent.top
@@ -205,7 +228,7 @@ Item{
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width * 0.20
             currentIndex: -1
-            model: ["LaNi5", "TiFe", "баллон"]
+            model: ["LaNi5", "TiFe", "компрессор"]
             displayText: "Из " + currentText
             onActivated: {
                 updateFilePath()
@@ -217,7 +240,7 @@ Item{
             Layout.fillHeight: true
             Layout.preferredWidth: parent.width * 0.20
             currentIndex: -1
-            model: ["LaNi5", "TiFe", "воздух"]
+            model: ["LaNi5", "TiFe"]
             displayText: "В " + currentText
             onActivated: {
                 updateFilePath()
@@ -371,35 +394,10 @@ Item{
         }
         clip: true
     }
-    Button{
-        id: testTableChange
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: 130
-        anchors.topMargin: 760
-        text: "Проверка добавления строки"
-        font.pixelSize: 13
-        onClicked: {
-            expTable.test()
-            tableScrollExp.scrollToBottom()
-        }
+    MessageDialog {
+        id: dialog
+        buttons: MessageDialog.Ok
+        text: "Необходимо открыть:"
+        informativeText: ""
     }
-    Button{
-        id: saveResult
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        anchors.topMargin: 760
-        text: "Сохранить"
-        font.pixelSize: 13
-        // onClicked: fileDialog.open()
-    }
-    FileDialog {
-        id: fileDialog
-        title: "Save Dialog"
-        fileMode: FileDialog.SaveFile
-        nameFilters: ["Text files (*.txt)"]
-        // onAccepted: flowToVolume ? flowToVolume.saveResults(selectedFile) : doNothing()
-    }
-
 }

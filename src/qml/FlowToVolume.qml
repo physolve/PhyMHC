@@ -50,18 +50,6 @@ TableView {
             time: columns[7]
         })
     }
-    function test(){
-        model.appendRow({
-            runCnt: -1,
-            name: "Последний",
-            passed: "0",
-            from: "LaNi5",
-            chargeFrom: "0",
-            to: "TiFe",
-            chargeTo: "0",
-            time: "00:00:00"
-        })
-    }
     delegate: DelegateChooser {
         DelegateChoice {
             column: 0

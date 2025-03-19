@@ -7,7 +7,6 @@
 
 PhyMHC::PhyMHC(int &argc, char **argv): 
     QApplication(argc, argv), m_scriptDefault(), m_testAxisTag(nullptr),
-    // time("time"), upstream("upstream"), downstream("downstream"),
     timeAnalog("time"), tcUp("Thermocoulpe upstream"), prUp("Pressure upstream"),
     flUp("Flow upstream"), tcDw("Thermocoulpe downstream"), prDw("Pressure downstream"), flDw("Flow downstream"),
     reactorUps("Reactor upstream"), reactorDws("Reactor downstream")
@@ -125,9 +124,10 @@ void PhyMHC::icpDoController(){
 }
 
 void PhyMHC::initScalarCalc(){
-    flowToVolumeUpstream.setCalcData(&timeAnalog, &flUp, &flDw, &reactorUps);
-    flowToVolumeDownstream.setCalcData(&timeAnalog, &flDw, &flUp, &reactorDws);
-    // connect(&flowToVolumeUpstream, &ScalarCalc::valueChanged, this, &PhyMHC::guiValsUpdate); later
+    // replace flDw to upstream  
+    flowToVolumeUpstream.setCalcData(&timeAnalog, &flUp, &flUp, &reactorUps);
+    // replace flDw to upstream  
+    flowToVolumeDownstream.setCalcData(&timeAnalog, &flUp, &flUp, &reactorDws);
 }
 
 void PhyMHC::initRunConfig(){
@@ -136,13 +136,11 @@ void PhyMHC::initRunConfig(){
     runConfig.setData(&flUp, LogType::LOG_flUp);
     runConfig.setData(&tcDw, LogType::LOG_tcDw);
     runConfig.setData(&prDw, LogType::LOG_prDw);
-    runConfig.setData(&flDw, LogType::LOG_flDw);
+    // replace flDw to upstream  
+    runConfig.setData(&flUp, LogType::LOG_flDw);
     runConfig.setData(&reactorUps, LogType::LOG_reactorUps);
     runConfig.setData(&reactorDws, LogType::LOG_reactorDws);
     m_runParams = runConfig.getRunParameters();
-    // m_runParams.initialLitresFrom = flowToVolumeUpstream.getCurrentScalar();
-    // m_runParams.initialLitresTo = flowToVolumeDownstream.getCurrentScalar();
-    //m_runParams.clockTime = flowToVolumeUpstream.getClockTime(); // ?
     runConfig.updateRunParameters(m_runParams);
 }
 
@@ -152,7 +150,8 @@ void PhyMHC::initLogData(){
     logData.setData(&flUp, LogType::LOG_flUp);
     logData.setData(&tcDw, LogType::LOG_tcDw);
     logData.setData(&prDw, LogType::LOG_prDw);
-    logData.setData(&flDw, LogType::LOG_flDw);
+    // replace flDw to upstream
+    logData.setData(&flUp, LogType::LOG_flDw);
     logData.setData(&reactorUps, LogType::LOG_reactorUps);
     logData.setData(&reactorDws, LogType::LOG_reactorDws);
     logData.startLog();
@@ -228,7 +227,7 @@ void PhyMHC::guiValsUpdate(){
 }
 
 void PhyMHC::updateGuiRun(){  
-    if(m_runParams.downstreamToUpstream){
+    if(m_runParams.downstreamToUpstream){ // TiFe->LaNi
         m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresTo;
         m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.endLitresFrom = flowToVolumeDownstream.getCurrentScalar();
@@ -236,7 +235,7 @@ void PhyMHC::updateGuiRun(){
         m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
-    else if(m_runParams.upstreamToDownstream){
+    else if(m_runParams.upstreamToDownstream){ // LaNi->TiFe
         m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresTo;
         m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.endLitresFrom = flowToVolumeUpstream.getCurrentScalar();
@@ -244,25 +243,25 @@ void PhyMHC::updateGuiRun(){
         m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
     }
-    else if(m_runParams.upstreamToAir){
+    else if(m_runParams.upstreamToAir){ // unused
         m_runParams.totalLitresPass = m_runParams.initialLitresFrom-flowToVolumeUpstream.getCurrentScalar();
         m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
-    else if(m_runParams.downstreamToAir){
+    else if(m_runParams.downstreamToAir){ // unused
         m_runParams.totalLitresPass = m_runParams.initialLitresFrom-flowToVolumeDownstream.getCurrentScalar();
         m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeDownstream.getClockTime();
     }
-    else if(m_runParams.supplyToUpstream){
+    else if(m_runParams.supplyToUpstream){ // compressor to LaNi - suppressed
         m_runParams.totalLitresPass = flowToVolumeUpstream.getCurrentScalar()-m_runParams.initialLitresTo;
         m_runParams.endLitresTo = flowToVolumeUpstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeUpstream.getSecondsTime();
         m_runParams.clockTime = flowToVolumeUpstream.getClockTime();
     }
-    else if(m_runParams.supplyToDownstream){
+    else if(m_runParams.supplyToDownstream){ // compressor to TiFe
         m_runParams.totalLitresPass = flowToVolumeDownstream.getCurrentScalar()-m_runParams.initialLitresTo;
         m_runParams.endLitresTo = flowToVolumeDownstream.getCurrentScalar();
         m_runParams.totalTimeSec = flowToVolumeDownstream.getSecondsTime();
@@ -277,7 +276,7 @@ guiValues PhyMHC::getGuiVals() const{
 
 void PhyMHC::runFromGui(){
     runConfig.updateRunParameters(m_runParams);
-    if(m_runParams.downstreamToUpstream){
+    if(m_runParams.downstreamToUpstream){ // TiFe->LaNi
         flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresFrom);
         flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresTo);
         flowToVolumeDownstream.setExposure(true);
@@ -292,7 +291,7 @@ void PhyMHC::runFromGui(){
         flowToVolumeDownstream.updateFromBackend();
         flowToVolumeUpstream.updateFromBackend();
     }
-    else if(m_runParams.upstreamToDownstream){
+    else if(m_runParams.upstreamToDownstream){ // LaNi->TiFe
         flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresFrom);
         flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresTo);
         flowToVolumeUpstream.setExposure(true);
@@ -307,28 +306,28 @@ void PhyMHC::runFromGui(){
         flowToVolumeUpstream.updateFromBackend();
         flowToVolumeDownstream.updateFromBackend();
     }
-    else if(m_runParams.upstreamToAir){
+    else if(m_runParams.upstreamToAir){ // unused
         flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresFrom);
         flowToVolumeUpstream.setExposure(true);
         flowToVolumeUpstream.setRemove(true);
         flowToVolumeUpstream.setAppend(false);
         flowToVolumeUpstream.updateFromBackend();
     }
-    else if(m_runParams.downstreamToAir){
+    else if(m_runParams.downstreamToAir){ // unused
         flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresFrom);
         flowToVolumeDownstream.setExposure(true);
         flowToVolumeDownstream.setRemove(true);
         flowToVolumeDownstream.setAppend(false);
         flowToVolumeDownstream.updateFromBackend();
     }
-    else if(m_runParams.supplyToUpstream){
+    else if(m_runParams.supplyToUpstream){ // compressor to LaNi - suppressed
         flowToVolumeUpstream.setVolumeValue(m_runParams.initialLitresTo);
         flowToVolumeUpstream.setExposure(true);
         flowToVolumeUpstream.setRemove(false);
         flowToVolumeUpstream.setAppend(true);
         flowToVolumeUpstream.updateFromBackend();
     }
-    else if(m_runParams.supplyToDownstream){
+    else if(m_runParams.supplyToDownstream){ // compressor to TiFe
         flowToVolumeDownstream.setVolumeValue(m_runParams.initialLitresTo);
         flowToVolumeDownstream.setExposure(true);
         flowToVolumeDownstream.setRemove(false);
@@ -339,7 +338,6 @@ void PhyMHC::runFromGui(){
         qDebug() << "Total error";
         return;
     }
-    
     runConfig.logRunCreation();
     runConfig.startRun();
     emit actualRunChanged();

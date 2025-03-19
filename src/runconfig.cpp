@@ -173,11 +173,11 @@ void RunConfig::configurateHeader(QString &upHeader){
         charge = QString("%1, %2 л.").arg(m_runParams.releaseFrom).arg(m_runParams.initialLitresFrom);
     }
     else if(m_runParams.supplyToUpstream){
-        regime = "баллона в LaNi5";
+        regime = "компрессора в LaNi5";
         charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
     }
     else if(m_runParams.supplyToDownstream){
-        regime = "баллона в TiFe";
+        regime = "компрессора в TiFe";
         charge = QString("%1, X л.; %2, %3 л.").arg(m_runParams.releaseFrom).arg(m_runParams.loadTo).arg(m_runParams.initialLitresTo);
     }
     upHeader+= QString("***\tЭксперимент:\t%1\n").arg(regime);
