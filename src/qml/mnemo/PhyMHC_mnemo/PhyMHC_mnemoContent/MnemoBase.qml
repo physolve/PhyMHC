@@ -8,24 +8,18 @@ Item {
     Image {
         z: 0
         id: hMCmnemo
-        source: "background/mnemoscheme_gamma.png"
+        source: "background/mnemoscheme_delta.png"
         // fillMode: Image.PreserveAspectFit
         width: 1070
         height: 900
         fillMode: Image.PreserveAspectCrop
         smooth: true
     }
-    GasTank {
-        z:1
-        id: gasTank
-        x: 921
-        y: 280
-    }
     ValveButton {
         z: 1
         id: valveDowns
-        x: 621
-        y: 315
+        x: 620
+        y: 507
         checked: backend.vDwState
         onClicked: backend.vDwState = checked
     }
@@ -151,7 +145,7 @@ Item {
     }
     TempWidget {
         id: temperatureUps
-        x: 407
+        x: 423
         y: 160
         value: backend.guiVals.temperatureUpstream
     }
@@ -164,22 +158,15 @@ Item {
 
     FlowMeterWidget {
         id: flowMeterUps
-        x: 530
-        y: 494
+        x: 431
+        y: 406
         value: backend.guiVals.flowUpstream
-    }
-
-    FlowMeterWidget {
-        id: flowMeterDowns
-        x: 332
-        y: 302
-        value: backend.guiVals.flowDownstream
     }
 
     ValveButton {
         id: valveVacuum
-        x: 115
-        y: 422
+        x: 137
+        y: 391
         z: 1
         checked: backend.vVaState
         onClicked: backend.vVaState = checked

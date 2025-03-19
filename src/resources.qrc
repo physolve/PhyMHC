@@ -3,9 +3,8 @@
         <file>qtquickcontrols2.conf</file>
     </qresource>
     <qresource prefix="/PhyMHC">
-
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/MnemoBase.qml</file>
-        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/background/mnemoscheme_gamma.png</file>
+        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/background/mnemoscheme_delta.png</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/pics/cooler.svg</file>
 
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/ValveButton.qml</file>
@@ -14,7 +13,6 @@
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/ShortComboBox.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/Reactor.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/FlowMeterWidget.qml</file>
-        <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/GasTank.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/CircularSlider.qml</file>
         <file>qml/mnemo/PhyMHC_mnemo/PhyMHC_mnemoContent/Cooler.qml</file>
 

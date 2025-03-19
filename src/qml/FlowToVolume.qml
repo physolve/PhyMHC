@@ -36,7 +36,18 @@ TableView {
         model: ["№", "Имя", "Прошло, л", "Из", "Заряд, л", "В", "Заряд, л", "За время"]
         clip: true
         // movableColumns: false
-        Component.onCompleted: test()
+    }
+    Component.onCompleted: {
+        model.appendRow({
+            runCnt: -1,
+            name: "Последний",
+            passed: "0",
+            from: "LaNi5",
+            chargeFrom: "0",
+            to: "TiFe",
+            chargeTo: "0",
+            time: "00:00:00"
+        })
     }
     function appendByColumns(columns){
         model.appendRow({
